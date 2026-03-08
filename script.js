@@ -50,9 +50,18 @@ body: JSON.stringify(answers)
 
 let data = await response.json();
 
+let skills = "";
+
+if(Array.isArray(data.missing_skills)){
+skills = data.missing_skills.join(", ");
+}
+else{
+skills = data.missing_skills;
+}
+
 document.getElementById("result").innerHTML =
 "<b>Recommended Role:</b> " + data.recommended_role +
-"<br><b>Missing Skills:</b> " + data.missing_skills.join(", ");
+"<br><b>Missing Skills:</b> " + skills;
 
 }
 
@@ -61,7 +70,8 @@ catch(error){
 document.getElementById("result").innerHTML =
 "Error connecting to AI system.";
 
-}
+console.error(error);
 
+}
 
 }
