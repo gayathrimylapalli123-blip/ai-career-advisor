@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 import requests
 
 app = FastAPI()
@@ -13,17 +14,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🔴 PASTE YOUR MAKE WEBHOOK URL HERE
+# 🔴 Your Make webhook
 MAKE_WEBHOOK = "https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq"
 
 
+# Homepage
+@app.get("/")
+def home():
+    return FileResponse("index.html")
+
+
+# AI analysis endpoint
 @app.post("/analyze")
 async def analyze(data: dict):
     try:
-        # Send data from website to Make
         response = requests.post(MAKE_WEBHOOK, json=data)
-
-        # Return Make response back to website
         return response.json()
 
     except Exception as e:
