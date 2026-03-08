@@ -36,7 +36,7 @@ q15:q15
 
 try{
 
-let response = await fetch("http://127.0.0.1:8000/analyze",{
+let response = await fetch("https://ai-career-advisor-0hrj.onrender.com/analyze",{
 
 method:"POST",
 
@@ -62,5 +62,6 @@ document.getElementById("result").innerHTML =
 "Error connecting to AI system.";
 
 }
+
 
 }
