@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>AI Career Assessment</title>
+<link rel="stylesheet" href="style.css">
+
+
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+<h1>AI Career Assessment</h1>
+
+<div class="question">
+<label>1. Which programming languages do you know?</label>
+<input type="text" id="q1" placeholder="python, java, c++">
+</div>
+
+<div class="question">
+<label>2. Programming experience level</label>
+<select id="q2">
+<option>Beginner</option>
+<option>Intermediate</option>
+<option>Advanced</option>
+</select>
+</div>
+
+<div class="question">
+<label>3. Have you built software projects?</label>
+<select id="q3">
+<option>Yes</option>
+<option>No</option>
+</select>
+</div>
+
+<div class="question">
+<label>4. Machine learning knowledge</label>
+<select id="q4">
+<option>None</option>
+<option>Basic</option>
+<option>Intermediate</option>
+<option>Advanced</option>
+</select>
+</div>
+
+<div class="question">
+<label>5. ML frameworks used</label>
+<input type="text" id="q5" placeholder="tensorflow, pytorch">
+</div>
+
+<div class="question">
+<label>6. Have you done data science projects?</label>
+<select id="q6">
+<option>Yes</option>
+<option>No</option>
+</select>
+</div>
+
+<div class="question">
+<label>7. Data analysis tools</label>
+<input type="text" id="q7" placeholder="pandas, numpy, excel">
+</div>
+
+<div class="question">
+<label>8. Data visualization tools</label>
+<input type="text" id="q8" placeholder="matplotlib, tableau">
+</div>
+
+<div class="question">
+<label>9. Cloud platforms</label>
+<input type="text" id="q9" placeholder="aws, azure">
+</div>
+
+<div class="question">
+<label>10. Have you deployed an application?</label>
+<select id="q10">
+<option>Yes</option>
+<option>No</option>
+</select>
+</div>
+
+<div class="question">
+<label>11. Databases you know</label>
+<input type="text" id="q11" placeholder="mysql, mongodb">
+</div>
+
+<div class="question">
+<label>12. Web development skills</label>
+<input type="text" id="q12" placeholder="html, css, javascript">
+</div>
+
+<div class="question">
+<label>13. Version control knowledge</label>
+<select id="q13">
+<option>Git</option>
+<option>None</option>
+</select>
+</div>
+
+<div class="question">
+<label>14. Career interest</label>
+<select id="q14">
+<option>AI</option>
+<option>Data Science</option>
+<option>Software Development</option>
+<option>Cloud Engineering</option>
+</select>
+</div>
+
+<div class="question">
+<label>15. Years of experience</label>
+<input type="number" id="q15">
+</div>
+
+<button onclick="analyzeSkills()">Analyze Career</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
