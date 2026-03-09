@@ -2,25 +2,27 @@
 <html>
 <head>
 
-<title>AI Career Assessment</title>
-
-<link rel="stylesheet" href="./style.css">
+<title>AI Career Advisor</title>
+<link rel="stylesheet" href="style.css">
 
 </head>
 
 <body>
 
-<div class="container">
+<div class="main">
 
-<h1>AI Career Assessment</h1>
+<h1>🚀 AI Career Advisor</h1>
+<p class="subtitle">Analyze your skills and discover the best tech career path.</p>
+
+<div class="card">
 
 <div class="question">
-<label>1. Which programming languages do you know?</label>
-<input type="text" id="q1" placeholder="python, java, c++">
+<label>Programming languages</label>
+<input type="text" id="q1" placeholder="python, java">
 </div>
 
 <div class="question">
-<label>2. Programming experience level</label>
+<label>Programming level</label>
 <select id="q2">
 <option>Beginner</option>
 <option>Intermediate</option>
@@ -29,7 +31,7 @@
 </div>
 
 <div class="question">
-<label>3. Have you built software projects?</label>
+<label>Built software projects?</label>
 <select id="q3">
 <option>Yes</option>
 <option>No</option>
@@ -37,7 +39,7 @@
 </div>
 
 <div class="question">
-<label>4. Machine learning knowledge</label>
+<label>Machine learning knowledge</label>
 <select id="q4">
 <option>None</option>
 <option>Basic</option>
@@ -47,12 +49,12 @@
 </div>
 
 <div class="question">
-<label>5. ML frameworks used</label>
+<label>ML frameworks</label>
 <input type="text" id="q5" placeholder="tensorflow, pytorch">
 </div>
 
 <div class="question">
-<label>6. Have you done data science projects?</label>
+<label>Data science projects?</label>
 <select id="q6">
 <option>Yes</option>
 <option>No</option>
@@ -60,22 +62,22 @@
 </div>
 
 <div class="question">
-<label>7. Data analysis tools</label>
-<input type="text" id="q7" placeholder="pandas, numpy, excel">
+<label>Data tools</label>
+<input type="text" id="q7" placeholder="pandas, numpy">
 </div>
 
 <div class="question">
-<label>8. Data visualization tools</label>
+<label>Visualization tools</label>
 <input type="text" id="q8" placeholder="matplotlib, tableau">
 </div>
 
 <div class="question">
-<label>9. Cloud platforms</label>
+<label>Cloud platforms</label>
 <input type="text" id="q9" placeholder="aws, azure">
 </div>
 
 <div class="question">
-<label>10. Have you deployed an application?</label>
+<label>Application deployed?</label>
 <select id="q10">
 <option>Yes</option>
 <option>No</option>
@@ -83,17 +85,17 @@
 </div>
 
 <div class="question">
-<label>11. Databases you know</label>
+<label>Databases</label>
 <input type="text" id="q11" placeholder="mysql, mongodb">
 </div>
 
 <div class="question">
-<label>12. Web development skills</label>
-<input type="text" id="q12" placeholder="html, css, javascript">
+<label>Web skills</label>
+<input type="text" id="q12" placeholder="html, css">
 </div>
 
 <div class="question">
-<label>13. Version control knowledge</label>
+<label>Version control</label>
 <select id="q13">
 <option>Git</option>
 <option>None</option>
@@ -101,7 +103,7 @@
 </div>
 
 <div class="question">
-<label>14. Career interest</label>
+<label>Career interest</label>
 <select id="q14">
 <option>AI</option>
 <option>Data Science</option>
@@ -111,97 +113,23 @@
 </div>
 
 <div class="question">
-<label>15. Years of experience</label>
+<label>Years of experience</label>
 <input type="number" id="q15">
 </div>
 
 <button onclick="analyzeSkills()">Analyze Career</button>
 
-<br><br>
-
-<div id="result"></div>
+<div id="loading" class="loading">
+Analyzing your career...
 </div>
- <script>
 
-async function analyzeSkills(){
+<div id="result" class="result"></div>
 
-let q1 = document.getElementById("q1").value || "";
-let q2 = document.getElementById("q2").value || "";
-let q3 = document.getElementById("q3").value || "";
-let q4 = document.getElementById("q4").value || "";
-let q5 = document.getElementById("q5").value || "";
-let q6 = document.getElementById("q6").value || "";
-let q7 = document.getElementById("q7").value || "";
-let q8 = document.getElementById("q8").value || "";
-let q9 = document.getElementById("q9").value || "";
-let q10 = document.getElementById("q10").value || "";
-let q11 = document.getElementById("q11").value || "";
-let q12 = document.getElementById("q12").value || "";
-let q13 = document.getElementById("q13").value || "";
-let q14 = document.getElementById("q14").value || "";
-let q15 = document.getElementById("q15").value || "";
+</div>
 
-let answers = {
-q1:q1,
-q2:q2,
-q3:q3,
-q4:q4,
-q5:q5,
-q6:q6,
-q7:q7,
-q8:q8,
-q9:q9,
-q10:q10,
-q11:q11,
-q12:q12,
-q13:q13,
-q14:q14,
-q15:q15
-};
+</div>
 
-try{
-
-let response = await fetch("https://ai-career-advisor-0hrj.onrender.com/analyze",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body: JSON.stringify(answers)
-});
-
-let data = await response.json();
-
-let skills = "";
-
-if(Array.isArray(data.missing_skills)){
-skills = data.missing_skills.join(", ");
-}else{
-skills = data.missing_skills;
-}
-
-document.getElementById("result").innerHTML =
-"<b>Recommended Role:</b> " + data.recommended_role +
-"<br><b>Missing Skills:</b> " + skills;
-
-}
-
-catch(error){
-
-document.getElementById("result").innerHTML =
-"Error connecting to AI system.";
-
-console.error(error);
-
-}
-
-}
-
-</script> 
-
-
-
+<script src="script.js"></script>
 
 </body>
 </html>
-
-

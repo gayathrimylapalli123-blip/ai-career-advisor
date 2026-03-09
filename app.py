@@ -1,11 +1,11 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-import requests
+import skill_model
 
 app = FastAPI()
 
-# Allow frontend (your HTML page) to call the API
+# Allow browser requests
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,25 +14,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 🔴 Your Make webhook
-MAKE_WEBHOOK = "https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq"
-
-
 # Homepage
 @app.get("/")
 def home():
     return FileResponse("index.html")
 
-
 # AI analysis endpoint
 @app.post("/analyze")
-async def analyze(data: dict):
-    try:
-        response = requests.post(MAKE_WEBHOOK, json=data)
-        return response.json()
+def analyze(data: dict):
 
-    except Exception as e:
-        return {
-            "recommended_role": "Error",
-            "missing_skills": str(e)
-        }
+    result = skill_model.predict_role(data)
+
+    return result

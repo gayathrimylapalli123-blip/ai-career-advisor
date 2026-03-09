@@ -1,44 +1,23 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+def predict_role(data):
 
-skill_clusters = {
+    role = "Data Scientist"
 
-    "AI Engineer": ["python","machine learning","deep learning","tensorflow","pytorch","nlp"],
+    missing = []
 
-    "Data Scientist": ["python","statistics","machine learning","pandas","data visualization"],
+    tools = data.get("q7","")
+    ml = data.get("q4","")
+    viz = data.get("q8","")
 
-    "Data Engineer": ["python","sql","spark","hadoop","etl"],
+    if "statistics" not in tools.lower():
+        missing.append("statistics")
 
-    "Cloud Engineer": ["aws","docker","kubernetes","terraform","linux"],
+    if ml == "None":
+        missing.append("machine learning")
 
-    "Software Engineer": ["python","java","nodejs","rest api","git"]
-
-}
-
-def analyze_skills(user_skills):
-
-    user_text = " ".join(user_skills)
-
-    job_roles = list(skill_clusters.keys())
-    job_skills = [" ".join(skill_clusters[r]) for r in job_roles]
-
-    corpus = job_skills + [user_text]
-
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(corpus)
-
-    similarity = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1])
-
-    scores = similarity.flatten()
-
-    best_index = scores.argmax()
-
-    best_role = job_roles[best_index]
-
-    missing_skills = list(set(skill_clusters[best_role]) - set(user_skills))
+    if "matplotlib" not in viz.lower():
+        missing.append("data visualization")
 
     return {
-        "recommended_role": best_role,
-        "scores": scores.tolist(),
-        "missing_skills": missing_skills
+        "recommended_role": role,
+        "missing_skills": missing
     }
