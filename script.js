@@ -1,7 +1,10 @@
 async function analyzeSkills() {
 
+    const loading = document.getElementById("loading");
     const resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = "Analyzing your career...";
+
+    loading.style.display = "block";
+    resultDiv.innerHTML = "";
 
     const data = {
         q1: document.getElementById("q1").value,
@@ -36,17 +39,23 @@ async function analyzeSkills() {
 
         const result = await response.json();
 
-        resultDiv.innerHTML = `
-            <h2>Recommended Role</h2>
-            <p>${result.recommended_role}</p>
+        loading.style.display = "none";
 
-            <h3>Skills to Learn</h3>
-            <p>${result.missing_skills.join(", ")}</p>
+        resultDiv.innerHTML = `
+            <div class="result-card">
+                <h2>Recommended Role</h2>
+                <p>${result.recommended_role}</p>
+
+                <h3>Skills to Learn</h3>
+                <p>${result.missing_skills.join(", ")}</p>
+            </div>
         `;
 
     } catch (error) {
 
+        loading.style.display = "none";
         resultDiv.innerHTML = "Error connecting to AI server.";
 
+        console.error(error);
     }
 }
