@@ -18,7 +18,7 @@ q14: document.getElementById("q14").value,
 q15: document.getElementById("q15").value
 };
 
-const response = await fetch("https://ai-career-advisor-api.onrender.com/analyze", {
+const response = await fetch("https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq", {
 method: "POST",
 headers: {
 "Content-Type": "application/json"
@@ -26,9 +26,14 @@ headers: {
 body: JSON.stringify(data)
 });
 
-const result = await response.text();
+const result = await response.json();
 
-document.getElementById("result").innerHTML =
-"<h2>AI Career Recommendation</h2><p>" + result + "</p>";
+document.getElementById("result").innerHTML = `
+<h2>Recommended Role</h2>
+<p>${result.recommended_role}</p>
+
+<h3>Skills to Learn</h3>
+<p>${result.missing_skills.join(", ")}</p>
+`;
 
 }
