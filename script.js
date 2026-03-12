@@ -26,9 +26,23 @@ headers: {
 body: JSON.stringify(data)
 });
 
-const result = await response.text();
+let text = await response.text();
 
-document.getElementById("result").innerHTML =
-"<h3>AI Career Recommendation</h3><p>" + result + "</p>";
+/* remove ```json and ``` */
+text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+/* convert text to JSON */
+const result = JSON.parse(text);
+
+/* show result on website */
+document.getElementById("result").innerHTML = `
+<h2>Recommended Role</h2>
+<p>${result.recommended_role}</p>
+
+<h3>Skills to Learn</h3>
+<ul>
+${result.missing_skills.map(skill => `<li>${skill}</li>`).join("")}
+</ul>
+`;
 
 }
