@@ -18,7 +18,7 @@ q14: document.getElementById("q14").value,
 q15: document.getElementById("q15").value
 };
 
-const response = await fetch("YOUR_MAKE_WEBHOOK_URL", {
+const response = await fetch("https://ai-career-advisor-api.onrender.com/analyze", {
 method: "POST",
 headers: {
 "Content-Type": "application/json"
