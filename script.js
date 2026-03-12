@@ -28,12 +28,15 @@ body: JSON.stringify(data)
 
 const result = await response.json();
 
+const role = result.recommended_role;
+const skills = result.missing_skills.join(", ");
+
 document.getElementById("result").innerHTML = `
 <h2>Recommended Role</h2>
-<p>${result.recommended_role}</p>
+<p>${role}</p>
 
 <h3>Skills to Learn</h3>
-<p>${result.missing_skills.join(", ")}</p>
+<p>${skills}</p>
 `;
 
 }
