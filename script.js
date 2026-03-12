@@ -26,17 +26,9 @@ headers: {
 body: JSON.stringify(data)
 });
 
-const result = await response.json();
+const result = await response.text();
 
-const role = result.recommended_role;
-const skills = result.missing_skills.join(", ");
-
-document.getElementById("result").innerHTML = `
-<h2>Recommended Role</h2>
-<p>${role}</p>
-
-<h3>Skills to Learn</h3>
-<p>${skills}</p>
-`;
+document.getElementById("result").innerHTML =
+"<h3>AI Career Recommendation</h3><p>" + result + "</p>";
 
 }
