@@ -1,132 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<title>AI Career Advisor</title>
-<link rel="stylesheet" href="style.css">
-
+    <title>AI Career Advisor</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <div class="main">
+    <h1>🚀 AI Career Advisor</h1>
+    <p class="subtitle">Chat with AI to discover your career path</p>
 
-<h1>🚀 AI Career Advisor</h1>
-<p class="subtitle">Analyze your skills and discover the best tech career path.</p>
+    <div class="card">
 
-<div class="card">
+        <div class="chat-container">
+            <div id="chatBox" class="chat-box"></div>
 
-<div class="question">
-<label>Programming languages</label>
-<input type="text" id="q1" placeholder="python, java">
-</div>
+            <div class="chat-input">
+                <input type="text" id="userInput" placeholder="Type your answer..." />
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
 
-<div class="question">
-<label>Programming level</label>
-<select id="q2">
-<option>Beginner</option>
-<option>Intermediate</option>
-<option>Advanced</option>
-</select>
-</div>
-
-<div class="question">
-<label>Built software projects?</label>
-<select id="q3">
-<option>Yes</option>
-<option>No</option>
-</select>
-</div>
-
-<div class="question">
-<label>Machine learning knowledge</label>
-<select id="q4">
-<option>None</option>
-<option>Basic</option>
-<option>Intermediate</option>
-<option>Advanced</option>
-</select>
-</div>
-
-<div class="question">
-<label>ML frameworks</label>
-<input type="text" id="q5" placeholder="tensorflow, pytorch">
-</div>
-
-<div class="question">
-<label>Data science projects?</label>
-<select id="q6">
-<option>Yes</option>
-<option>No</option>
-</select>
-</div>
-
-<div class="question">
-<label>Data tools</label>
-<input type="text" id="q7" placeholder="pandas, numpy">
-</div>
-
-<div class="question">
-<label>Visualization tools</label>
-<input type="text" id="q8" placeholder="matplotlib, tableau">
-</div>
-
-<div class="question">
-<label>Cloud platforms</label>
-<input type="text" id="q9" placeholder="aws, azure">
-</div>
-
-<div class="question">
-<label>Application deployed?</label>
-<select id="q10">
-<option>Yes</option>
-<option>No</option>
-</select>
-</div>
-
-<div class="question">
-<label>Databases</label>
-<input type="text" id="q11" placeholder="mysql, mongodb">
-</div>
-
-<div class="question">
-<label>Web skills</label>
-<input type="text" id="q12" placeholder="html, css">
-</div>
-
-<div class="question">
-<label>Version control</label>
-<select id="q13">
-<option>Git</option>
-<option>None</option>
-</select>
-</div>
-
-<div class="question">
-<label>Career interest</label>
-<select id="q14">
-<option>AI</option>
-<option>Data Science</option>
-<option>Software Development</option>
-<option>Cloud Engineering</option>
-</select>
-</div>
-
-<div class="question">
-<label>Years of experience</label>
-<input type="number" id="q15">
-</div>
-
-<button onclick="analyzeSkills()">Analyze Career</button>
-
-<div id="loading" class="loading">
-Analyzing your career...
-</div>
-
-<div id="result" class="result"></div>
-
-</div>
-
+    </div>
 </div>
 
 <script src="script.js"></script>

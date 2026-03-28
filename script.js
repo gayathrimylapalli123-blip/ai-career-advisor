@@ -1,48 +1,55 @@
-async function analyzeSkills() {
+let webhookURL = "https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq";
 
-const data = {
-q1: document.getElementById("q1").value,
-q2: document.getElementById("q2").value,
-q3: document.getElementById("q3").value,
-q4: document.getElementById("q4").value,
-q5: document.getElementById("q5").value,
-q6: document.getElementById("q6").value,
-q7: document.getElementById("q7").value,
-q8: document.getElementById("q8").value,
-q9: document.getElementById("q9").value,
-q10: document.getElementById("q10").value,
-q11: document.getElementById("q11").value,
-q12: document.getElementById("q12").value,
-q13: document.getElementById("q13").value,
-q14: document.getElementById("q14").value,
-q15: document.getElementById("q15").value
-};
+let conversation = [];
 
-const response = await fetch("https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify(data)
-});
+function addMessage(text, sender) {
+    let chatBox = document.getElementById("chatBox");
+    let div = document.createElement("div");
+    div.className = sender;
+    div.innerText = text;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
 
-let text = await response.text();
+async function sendMessage() {
+    let input = document.getElementById("userInput");
+    let message = input.value;
 
-/* remove ```json and ``` */
-text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    if (!message) return;
 
-/* convert text to JSON */
-const result = JSON.parse(text);
+    addMessage(message, "user");
 
-/* show result on website */
-document.getElementById("result").innerHTML = `
-<h2>Recommended Role</h2>
-<p>${result.recommended_role}</p>
+    conversation.push({
+        role: "user",
+        content: message
+    });
 
-<h3>Skills to Learn</h3>
-<ul>
-${result.missing_skills.map(skill => `<li>${skill}</li>`).join("")}
-</ul>
-`;
+    input.value = "";
 
+    try {
+        let response = await fetch(webhookURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                messages: conversation
+            })
+        });
+
+        let data = await response.json();
+
+        let reply = data.reply || "No response";
+
+        addMessage(reply, "bot");
+
+        conversation.push({
+            role: "assistant",
+            content: reply
+        });
+
+    } catch (error) {
+        addMessage("Error connecting to AI", "bot");
+        console.error(error);
+    }
 }
