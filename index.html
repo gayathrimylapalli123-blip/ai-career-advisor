@@ -93,6 +93,10 @@ let step = 1;
 function start(){
   answers = [];
   step = 1;
+
+  // 🔥 REMOVE START BUTTON
+  document.querySelector("button").style.display = "none";
+
   loadQuestion();
 }
 
@@ -126,7 +130,7 @@ async function loadQuestion(choice=null){
 
       let html = "";
       (data.options || []).forEach(opt=>{
-        html += `<div class="option" onclick="selectOption('${opt}')">${opt}</div>`;
+        html += `<div class="option" onclick='selectOption("${opt}")'>${opt}</div>`;
       });
 
       document.getElementById("options").innerHTML = html;
