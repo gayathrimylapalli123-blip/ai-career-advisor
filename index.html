@@ -1,31 +1,125 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AI Career Advisor</title>
-    <link rel="stylesheet" href="style.css">
+  <title>AI Career Advisor</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: linear-gradient(135deg,#1e3c72,#2a5298);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      height:100vh;
+    }
+
+    .card {
+      background:white;
+      padding:30px;
+      border-radius:12px;
+      width:450px;
+      text-align:center;
+    }
+
+    .option {
+      background:#eee;
+      padding:10px;
+      margin:10px;
+      cursor:pointer;
+      border-radius:6px;
+    }
+
+    .option:hover {
+      background:#2a5298;
+      color:white;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="main">
-    <h1>🚀 AI Career Advisor</h1>
-    <p class="subtitle">Chat with AI to discover your career path</p>
+<div class="card">
 
-    <div class="card">
+<h2>🚀 AI Career Advisor</h2>
 
-        <div class="chat-container">
-            <div id="chatBox" class="chat-box"></div>
-
-            <div class="chat-input">
-                <input type="text" id="userInput" placeholder="Type your answer..." />
-                <button onclick="sendMessage()">Send</button>
-            </div>
-        </div>
-
-    </div>
+<div id="questionBox">
+  <p id="question">Click Start</p>
+  <div id="options"></div>
+  <button onclick="start()">Start</button>
 </div>
 
-<script src="script.js"></script>
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let webhook = "https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq";
+
+let answers = [];
+let step = 1;
+
+function start(){
+  answers = [];
+  step = 1;
+  loadQuestion();
+}
+
+async function loadQuestion(choice=null){
+
+  if(choice) answers.push(choice);
+
+  let res = await fetch(webhook,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({answers, step})
+  });
+
+  let data = await res.json();
+
+  if(data.type === "question"){
+
+    document.getElementById("question").innerText = data.question;
+
+    let html = "";
+    data.options.forEach(opt=>{
+      html += `<div class="option" onclick="selectOption('${opt}')">${opt}</div>`;
+    });
+
+    document.getElementById("options").innerHTML = html;
+
+    step++;
+
+  } else {
+    showResult(data);
+  }
+}
+
+function selectOption(opt){
+  loadQuestion(opt);
+}
+
+function showResult(data){
+
+  document.getElementById("questionBox").style.display="none";
+
+  let html = `
+    <h3>Recommended Role: ${data.role}</h3>
+
+    <h4>Skills Gap</h4>
+    <ul>${data.skills_gap.map(s=>`<li>${s}</li>`).join("")}</ul>
+
+    <h4>Roadmap</h4>
+    <ul>${data.roadmap.map(s=>`<li>${s}</li>`).join("")}</ul>
+
+    <h4>Resources</h4>
+    <ul>${data.resources.map(s=>`<li>${s}</li>`).join("")}</ul>
+  `;
+
+  document.getElementById("result").innerHTML = html;
+}
+
+</script>
 
 </body>
 </html>
