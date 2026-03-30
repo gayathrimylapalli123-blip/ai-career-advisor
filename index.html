@@ -130,7 +130,7 @@ async function loadQuestion(choice=null){
 
       let html = "";
       (data.options || []).forEach(opt=>{
-        html += `<div class="option" onclick='selectOption("${opt}")'>${opt}</div>`;
+       html += `<div class="option" onclick="selectOption(this.innerText)">${opt}</div>`;
       });
 
       document.getElementById("options").innerHTML = html;
