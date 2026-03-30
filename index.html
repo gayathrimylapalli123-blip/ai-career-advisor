@@ -11,6 +11,7 @@
       justify-content:center;
       align-items:center;
       height:100vh;
+      margin:0;
     }
 
     .card {
@@ -19,19 +20,48 @@
       border-radius:12px;
       width:450px;
       text-align:center;
+      box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      margin-bottom:20px;
+    }
+
+    #question {
+      font-size:18px;
+      margin-bottom:20px;
     }
 
     .option {
-      background:#eee;
-      padding:10px;
-      margin:10px;
+      background:#f1f1f1;
+      padding:12px;
+      margin:10px 0;
+      border-radius:8px;
       cursor:pointer;
-      border-radius:6px;
+      transition:0.3s;
     }
 
     .option:hover {
       background:#2a5298;
       color:white;
+    }
+
+    button {
+      padding:10px 20px;
+      border:none;
+      background:#2a5298;
+      color:white;
+      border-radius:8px;
+      cursor:pointer;
+    }
+
+    #result {
+      text-align:left;
+      margin-top:20px;
+    }
+
+    ul {
+      padding-left:20px;
     }
   </style>
 </head>
@@ -40,80 +70,107 @@
 
 <div class="card">
 
-<h2>🚀 AI Career Advisor</h2>
+  <h2>🚀 AI Career Advisor</h2>
 
-<div id="questionBox">
-  <p id="question">Click Start</p>
-  <div id="options"></div>
-  <button onclick="start()">Start</button>
-</div>
+  <div id="questionBox">
+    <p id="question">Click Start to Begin</p>
+    <div id="options"></div>
+    <button onclick="start()">Start</button>
+  </div>
 
-<div id="result"></div>
+  <div id="result"></div>
 
 </div>
 
 <script>
 
-let webhook = "https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq";
+let webhook = "https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq"; // 🔥 IMPORTANT
 
 let answers = [];
 let step = 1;
 
+// START
 function start(){
   answers = [];
   step = 1;
   loadQuestion();
 }
 
+// LOAD QUESTION
 async function loadQuestion(choice=null){
 
   if(choice) answers.push(choice);
 
-  let res = await fetch(webhook,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({answers, step})
-  });
-
-  let data = await res.json();
-
-  if(data.type === "question"){
-
-    document.getElementById("question").innerText = data.question;
-
-    let html = "";
-    data.options.forEach(opt=>{
-      html += `<div class="option" onclick="selectOption('${opt}')">${opt}</div>`;
+  try {
+    let res = await fetch(webhook,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({answers, step})
     });
 
-    document.getElementById("options").innerHTML = html;
+    let text = await res.text();
+    console.log("RAW RESPONSE:", text);
 
-    step++;
+    // 🔥 CLEAN BAD JSON FORMATTING
+    text = text.replace(/```json/g, "")
+               .replace(/```/g, "")
+               .trim();
 
-  } else {
-    showResult(data);
+    let data = JSON.parse(text);
+    console.log("PARSED DATA:", data);
+
+    // QUESTION FLOW
+    if(data.type === "question"){
+
+      document.getElementById("question").innerText = data.question;
+
+      let html = "";
+      (data.options || []).forEach(opt=>{
+        html += `<div class="option" onclick="selectOption('${opt}')">${opt}</div>`;
+      });
+
+      document.getElementById("options").innerHTML = html;
+
+      step++;
+
+    } 
+
+    // RESULT FLOW
+    else if(data.type === "result") {
+      showResult(data);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("⚠️ Error connecting to AI. Check Make output.");
   }
 }
 
+// OPTION CLICK
 function selectOption(opt){
   loadQuestion(opt);
 }
 
+// SHOW RESULT
 function showResult(data){
 
   document.getElementById("questionBox").style.display="none";
 
+  let skills = data.skills_gap || [];
+  let roadmap = data.roadmap || [];
+  let resources = data.resources || [];
+
   let html = `
-    <h3>Recommended Role: ${data.role}</h3>
+    <h3>Recommended Role: ${data.role || "Not available"}</h3>
 
     <h4>Skills Gap</h4>
-    <ul>${data.skills_gap.map(s=>`<li>${s}</li>`).join("")}</ul>
+    <ul>${skills.map(s=>`<li>${s}</li>`).join("")}</ul>
 
     <h4>Roadmap</h4>
-    <ul>${data.roadmap.map(s=>`<li>${s}</li>`).join("")}</ul>
+    <ul>${roadmap.map(s=>`<li>${s}</li>`).join("")}</ul>
 
     <h4>Resources</h4>
-    <ul>${data.resources.map(s=>`<li>${s}</li>`).join("")}</ul>
+    <ul>${resources.map(s=>`<li>${s}</li>`).join("")}</ul>
   `;
 
   document.getElementById("result").innerHTML = html;
