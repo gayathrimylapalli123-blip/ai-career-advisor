@@ -1,6 +1,6 @@
 import requests
 
-url = "https://hook.eu1.make.com/iker9497gakwnfjfve05gjh1yttfrawq"
+url = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793"
 
 data = {
  "q1":"python",
