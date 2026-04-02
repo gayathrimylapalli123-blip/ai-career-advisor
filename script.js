@@ -8,13 +8,11 @@ function start() {
 // Load question from n8n
 async function loadQuestion(answer = "") {
   try {
-   const res = await fetch("https://corsproxy.io/?" + WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ answer })
-    });
+  const url = WEBHOOK_URL + "?answer=" + encodeURIComponent(answer);
+
+const res = await fetch(
+  "https://api.allorigins.win/raw?url=" + encodeURIComponent(url)
+);
 
     const data = await res.json();
     console.log("RAW RESPONSE:", data);
