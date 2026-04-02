@@ -20,7 +20,7 @@ async function loadQuestion(answer = "") {
     console.log("RAW RESPONSE:", data);
 
     // 🔥 Extract text from n8n response
-    let text = data.output[0].content[0].text;
+    let text = data?.output?.[0]?.content?.[0]?.text;
 
     // 🔥 Clean markdown (```json ... ```)
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
