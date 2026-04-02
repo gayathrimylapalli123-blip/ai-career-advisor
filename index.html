@@ -87,7 +87,7 @@ function start() {
 // Load question
 async function loadQuestion(answer = "") {
   try {
-    const res = await fetch(WEBHOOK_URL, {
+    const res = await fetch("https://corsproxy.io/?" + WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
