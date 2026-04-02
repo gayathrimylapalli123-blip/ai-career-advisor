@@ -1,67 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>AI Career Advisor</title>
 
   <style>
     body {
-      font-family: Arial;
-      background: linear-gradient(135deg,#1e3c72,#2a5298);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      margin:0;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #2b4c7e, #3f72af);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
     .card {
-      background:white;
-      padding:30px;
-      border-radius:12px;
-      width:450px;
-      text-align:center;
-      box-shadow:0 10px 30px rgba(0,0,0,0.2);
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      width: 400px;
+      text-align: center;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
     }
 
     h2 {
-      margin-bottom:20px;
+      margin-bottom: 20px;
     }
 
     #question {
-      font-size:18px;
-      margin-bottom:20px;
+      font-size: 18px;
+      margin-bottom: 15px;
     }
 
-    .option {
-      background:#f1f1f1;
-      padding:12px;
-      margin:10px 0;
-      border-radius:8px;
-      cursor:pointer;
-      transition:0.3s;
+    .option-btn {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #e0e0e0;
+      cursor: pointer;
+      transition: 0.3s;
     }
 
-    .option:hover {
-      background:#2a5298;
-      color:white;
+    .option-btn:hover {
+      background: #cfd8dc;
     }
 
     button {
-      padding:10px 20px;
-      border:none;
-      background:#2a5298;
-      color:white;
-      border-radius:8px;
-      cursor:pointer;
+      margin-top: 15px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      background: #3f72af;
+      color: white;
+      cursor: pointer;
     }
 
-    #result {
-      text-align:left;
-      margin-top:20px;
-    }
-
-    ul {
-      padding-left:20px;
+    button:hover {
+      background: #2b4c7e;
     }
   </style>
 </head>
@@ -69,118 +68,81 @@
 <body>
 
 <div class="card">
-
   <h2>🚀 AI Career Advisor</h2>
 
-  <div id="questionBox">
-    <p id="question">Click Start to Begin</p>
-    <div id="options"></div>
-    <button onclick="start()">Start</button>
-  </div>
+  <p id="question">Click Start to Begin</p>
+  <div id="options"></div>
 
-  <div id="result"></div>
-
+  <button onclick="start()">Start</button>
 </div>
 
 <script>
+const WEBHOOK_URL = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd7";
 
-let webhook = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793"; // 🔥 IMPORTANT
-
-let answers = [];
-let step = 1;
-
-// START
-function start(){
-  answers = [];
-  step = 1;
-
-  // 🔥 REMOVE START BUTTON
-  document.querySelector("button").style.display = "none";
-
-  loadQuestion();
+// Start button
+function start() {
+  loadQuestion("");
 }
 
-// LOAD QUESTION
-async function loadQuestion(choice=null){
-
-  if(choice) answers.push(choice);
-
+// Load question
+async function loadQuestion(answer = "") {
   try {
-    let res = await fetch(webhook,{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({answers, step})
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ answer })
     });
 
-    let text = await res.text();
-    console.log("RAW RESPONSE:", text);
+    const data = await res.json();
 
-    // 🔥 CLEAN BAD JSON FORMATTING
-    text = text.replace(/```json/g, "")
-               .replace(/```/g, "")
-               .trim();
+    let text = data?.output?.[0]?.content?.[0]?.text;
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
-    let data = JSON.parse(text);
-    console.log("PARSED DATA:", data);
+    const parsed = JSON.parse(text);
 
-    // QUESTION FLOW
-    if(data.type === "question"){
-
-      document.getElementById("question").innerText = data.question;
-
-      let html = "";
-      (data.options || []).forEach(opt=>{
-       html += `<div class="option" onclick="selectOption(this.innerText)">${opt}</div>`;
-      });
-
-      document.getElementById("options").innerHTML = html;
-
-      step++;
-
-    } 
-
-    // RESULT FLOW
-    else if(data.type === "result") {
-      showResult(data);
+    if (parsed.type === "question") {
+      showQuestion(parsed);
+    } else if (parsed.type === "result") {
+      showResult(parsed);
     }
 
   } catch (err) {
     console.error(err);
-    alert("⚠️ Error connecting to AI. Check Make output.");
+    alert("Error connecting to AI");
   }
 }
 
-// OPTION CLICK
-function selectOption(opt){
-  loadQuestion(opt);
+// Show question
+function showQuestion(data) {
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
+
+  questionEl.innerText = data.question;
+  optionsEl.innerHTML = "";
+
+  data.options.forEach(option => {
+    const btn = document.createElement("button");
+    btn.innerText = option;
+    btn.className = "option-btn";
+    btn.onclick = () => loadQuestion(option);
+    optionsEl.appendChild(btn);
+  });
 }
 
-// SHOW RESULT
-function showResult(data){
+// Show result
+function showResult(data) {
+  const questionEl = document.getElementById("question");
+  const optionsEl = document.getElementById("options");
 
-  document.getElementById("questionBox").style.display="none";
+  questionEl.innerText = "🎯 Career Recommendation";
 
-  let skills = data.skills_gap || [];
-  let roadmap = data.roadmap || [];
-  let resources = data.resources || [];
-
-  let html = `
-    <h3>Recommended Role: ${data.role || "Not available"}</h3>
-
-    <h4>Skills Gap</h4>
-    <ul>${skills.map(s=>`<li>${s}</li>`).join("")}</ul>
-
-    <h4>Roadmap</h4>
-    <ul>${roadmap.map(s=>`<li>${s}</li>`).join("")}</ul>
-
-    <h4>Resources</h4>
-    <ul>${resources.map(s=>`<li>${s}</li>`).join("")}</ul>
+  optionsEl.innerHTML = `
+    <p><strong>Role:</strong> ${data.role}</p>
+    <p><strong>Skills Gap:</strong> ${data.skills_gap.join(", ")}</p>
+    <p><strong>Roadmap:</strong> ${data.roadmap.join(", ")}</p>
+    <p><strong>Resources:</strong> ${data.resources.join(", ")}</p>
   `;
-
-  document.getElementById("result").innerHTML = html;
 }
-
 </script>
-
-</body>
-</html>
