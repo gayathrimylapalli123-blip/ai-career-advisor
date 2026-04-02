@@ -75,7 +75,6 @@
 
   <button onclick="start()">Start</button>
 </div>
-
 <script>
 const WEBHOOK_URL = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd7";
 
@@ -97,7 +96,7 @@ async function loadQuestion(answer = "") {
 
     const data = await res.json();
 
-    let text = data?.output?.[0]?.content?.[0]?.text;
+    let text = data?.output?.[0]?.content?.[0]?.text || "";
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
     const parsed = JSON.parse(text);
