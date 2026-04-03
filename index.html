@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>AI Career Advisor</title>
+  let stage = "education";
 
   <style>
     body {
@@ -107,7 +108,7 @@ async function loadQuestion(answer = "") {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ history })
+      body: JSON.stringify({ history, stage })
     });
 
     const data = await res.json();
@@ -118,7 +119,9 @@ async function loadQuestion(answer = "") {
 
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
-    const parsed = JSON.parse(text);
+   if (parsed.next_stage) {
+  stage = parsed.next_stage;
+}
 
     history.push({
       role: "assistant",
