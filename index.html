@@ -77,8 +77,9 @@
 </div>
 
 <script>
+  let history = [];
 const WEBHOOK_URL = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793";
-
+let step = 1;
 let isLoading = false;
 
 // Start button
@@ -90,8 +91,16 @@ function start() {
 // Load question
 async function loadQuestion(answer = "") {
 
-  if (isLoading) return; // prevent multiple calls
+  if (isLoading) return;
   isLoading = true;
+
+  // store user answer
+  if (answer) {
+    history.push({
+      role: "user",
+      content: answer
+    });
+  }
 
   try {
     const res = await fetch(WEBHOOK_URL, {
@@ -99,9 +108,38 @@ async function loadQuestion(answer = "") {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ answer })
+      body: JSON.stringify({ history }) // 🔥 IMPORTANT CHANGE
     });
 
+    const data = await res.json();
+
+    let text = data?.output?.[0]?.content?.[0]?.text;
+
+    if (!text) throw new Error("No response");
+
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+    const parsed = JSON.parse(text);
+
+    // store AI question also
+    history.push({
+      role: "assistant",
+      content: parsed.question
+    });
+
+    if (parsed.type === "question") {
+      showQuestion(parsed);
+    } else if (parsed.type === "result") {
+      showResult(parsed);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert("Error connecting to AI");
+  }
+
+  isLoading = false;
+}
     const data = await res.json();
 
     let text = data?.output?.[0]?.content?.[0]?.text;
@@ -114,6 +152,7 @@ async function loadQuestion(answer = "") {
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
     const parsed = JSON.parse(text);
+    step = parsed.step || step;
 
     if (parsed.type === "question") {
       showQuestion(parsed);
