@@ -18,7 +18,13 @@ const res = await fetch(
     console.log("RAW RESPONSE:", data);
 
     // 🔥 Extract text from n8n response
-    let text = data?.output?.[0]?.content?.[0]?.text;
+   let text = data?.output?.[0]?.content?.[0]?.text;
+
+if (!text) {
+  console.error("Invalid response:", data);
+  alert("Invalid response from AI");
+  return;
+}
 
     // 🔥 Clean markdown (```json ... ```)
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
