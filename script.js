@@ -37,10 +37,14 @@ async function loadQuestion(answer = "") {
     }
 
     const data = await res.json();
-    console.log("✅ RESPONSE:", data);
+    console.log("✅ RESPONSE FROM n8n:", data);
 
-    // ✅ HANDLE ARRAY OR OBJECT
+    // 🔥 HANDLE ARRAY OR OBJECT RESPONSE
     const response = Array.isArray(data) ? data[0] : data;
+
+    if (!response) {
+      throw new Error("Empty response");
+    }
 
     if (response.type === "question") {
       showQuestion(response);
@@ -49,7 +53,7 @@ async function loadQuestion(answer = "") {
       showResult(response);
     } 
     else {
-      console.error("Unexpected format:", response);
+      console.error("❌ Unexpected format:", response);
       alert("Invalid AI response");
     }
 
@@ -78,7 +82,7 @@ function showQuestion(data) {
   });
 }
 
-// ✅ Handle answer
+// ✅ Handle answer + state
 function handleAnswer(option) {
 
   if (stage === "education") {
