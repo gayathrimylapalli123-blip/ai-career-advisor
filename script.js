@@ -1,7 +1,7 @@
 const WEBHOOK_URL = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793";
 
 let stage = "education";
-
+console.log("NEW VERSION LOADED");
 let userData = {
   education: null,
   skills: [],
