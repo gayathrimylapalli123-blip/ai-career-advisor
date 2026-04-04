@@ -11,12 +11,12 @@ let userData = {
 
 let conversationHistory = [];
 
-// Start button
+// ✅ Start button
 function start() {
   loadQuestion("");
 }
 
-// 🔥 MAIN FUNCTION (FIXED)
+// ✅ Main function
 async function loadQuestion(answer = "") {
   try {
     const res = await fetch(WEBHOOK_URL, {
@@ -37,38 +37,29 @@ async function loadQuestion(answer = "") {
     }
 
     const data = await res.json();
-    console.log("✅ RESPONSE FROM n8n:", data);
+    console.log("✅ RESPONSE:", data);
 
-    // ✅ DIRECTLY USE JSON (NO parsing needed)
-   const response = Array.isArray(data) ? data[0] : data;
+    // ✅ HANDLE ARRAY OR OBJECT
+    const response = Array.isArray(data) ? data[0] : data;
 
-if (response.type === "question") {
-  showQuestion(response);
-} 
-else if (response.type === "result") {
-  showResult(response);
-} 
-else {
-  console.error("Unexpected format:", response);
-  alert("Invalid AI response");
-}
-      showQuestion(data);
+    if (response.type === "question") {
+      showQuestion(response);
     } 
-    else if (data.type === "result") {
-      showResult(data);
+    else if (response.type === "result") {
+      showResult(response);
     } 
     else {
-      console.error("Unexpected format:", data);
+      console.error("Unexpected format:", response);
       alert("Invalid AI response");
     }
 
   } catch (err) {
-    console.error("❌ FETCH ERROR:", err);
+    console.error("❌ ERROR:", err);
     alert("Error connecting to AI");
   }
 }
 
-// Show question
+// ✅ Show question
 function showQuestion(data) {
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
@@ -87,7 +78,7 @@ function showQuestion(data) {
   });
 }
 
-// Handle answer + state update
+// ✅ Handle answer
 function handleAnswer(option) {
 
   if (stage === "education") {
@@ -111,7 +102,6 @@ function handleAnswer(option) {
     stage = "result";
   }
 
-  // Save history
   conversationHistory.push({
     stage: stage,
     answer: option
@@ -120,7 +110,7 @@ function handleAnswer(option) {
   loadQuestion(option);
 }
 
-// Show final result
+// ✅ Show result
 function showResult(data) {
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
