@@ -11,12 +11,12 @@ let userData = {
 
 let conversationHistory = [];
 
-// Start button
+// ✅ Start button
 function start() {
   loadQuestion("");
 }
 
-// Main function
+// ✅ Main function
 async function loadQuestion(answer = "") {
   try {
     console.log("Sending request...");
@@ -40,51 +40,46 @@ async function loadQuestion(answer = "") {
 
     console.log("RESPONSE FROM n8n:", data);
 
-    // ✅ STEP 1: handle array
+    // 🔥 FIX 1: array
     if (Array.isArray(data)) {
       data = data[0];
     }
 
-    // ✅ STEP 2: handle string (double JSON)
+    // 🔥 FIX 2: string JSON
     if (typeof data === "string") {
       try {
         data = JSON.parse(data);
       } catch (e) {}
     }
 
-    // ✅ STEP 3: AGAIN check array (important!)
+    // 🔥 FIX 3: again array
     if (Array.isArray(data)) {
       data = data[0];
     }
 
-    // 🧠 FINAL FIX: ALWAYS extract object from array
-if (Array.isArray(data)) {
-  data = data[0];
+    console.log("FINAL CLEAN DATA:", data);
+
+    if (!data || typeof data !== "object") {
+      alert("Invalid AI response");
+      return;
+    }
+
+    if (data.type === "question") {
+      showQuestion(data);
+    } else if (data.type === "result") {
+      showResult(data);
+    } else {
+      console.error("Unknown type:", data);
+      alert("Invalid AI response type");
+    }
+
+  } catch (err) {
+    console.error("FETCH ERROR:", err);
+    alert("Error connecting to AI");
+  }
 }
 
-// AFTER ALL PARSING
-
-if (Array.isArray(data)) {
-  data = data[0];
-}
-
-console.log("FINAL CLEAN DATA:", data);
-
-if (!data || typeof data !== "object") {
-  alert("Invalid AI response");
-  return;
-}
-
-if (data && data.type === "question") {
-  showQuestion(data);
-} else if (data && data.type === "result") {
-  showResult(data);
-} else {
-  console.error("Unknown type:", data);
-  alert("Invalid AI response type");
-}
-
-// Show question
+// ✅ Show question
 function showQuestion(data) {
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
@@ -103,7 +98,7 @@ function showQuestion(data) {
   });
 }
 
-// Handle answer
+// ✅ Handle answer
 function handleAnswer(option) {
 
   if (stage === "education") {
@@ -135,7 +130,7 @@ function handleAnswer(option) {
   loadQuestion(option);
 }
 
-// Show result
+// ✅ Show result
 function showResult(data) {
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
