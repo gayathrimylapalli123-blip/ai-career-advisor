@@ -64,14 +64,36 @@ async function loadQuestion(answer = "") {
       return;
     }
 
-    if (data.type === "question") {
-      showQuestion(data);
-    } else if (data.type === "result") {
-      showResult(data);
-    } else {
-      console.error("Unknown type:", data);
-      alert("Invalid AI response type");
-    }
+   // ✅ FORCE CLEAN STRUCTURE
+
+// if array → take first
+if (Array.isArray(data)) {
+  data = data[0];
+}
+
+// if wrapped inside another object (n8n sometimes does this)
+if (data && data.json) {
+  data = data.json;
+}
+
+// if still array again
+if (Array.isArray(data)) {
+  data = data[0];
+}
+
+console.log("FINAL FIXED DATA:", data);
+
+// ✅ NOW SAFE CHECK
+if (data && data.type === "question") {
+  showQuestion(data);
+} 
+else if (data && data.type === "result") {
+  showResult(data);
+} 
+else {
+  console.error("Still wrong format:", data);
+  alert("Invalid AI response type");
+}
 
   } catch (err) {
     console.error("FETCH ERROR:", err);
