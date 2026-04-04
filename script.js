@@ -39,34 +39,24 @@ async function loadQuestion(answer = "") {
     const data = await res.json();
     console.log("RAW RESPONSE:", data);
 
-    // 🔥 Handle different response formats safely
-    let text = null;
-
-    if (data.text) {
-      text = data.text;
-    } else if (data.output) {
-      text = data.output[0]?.content[0]?.text;
-    } else {
-      console.error("Unknown response format:", data);
-      alert("Invalid response from AI");
-      return;
-    }
+    // ✅ EXPECT ONLY THIS FORMAT FROM n8n
+    let text = data.text;
 
     if (!text) {
-      console.error("No text found:", data);
+      console.error("FULL RESPONSE:", data);
       alert("No response from AI");
       return;
     }
 
-    // Clean markdown if exists
+    // Clean formatting if needed
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
     let parsed;
 
     try {
       parsed = JSON.parse(text);
-    } catch (e) {
-      console.error("JSON Parse Error:", text);
+    } catch (err) {
+      console.error("JSON PARSE ERROR:", text);
       alert("Invalid AI response format");
       return;
     }
