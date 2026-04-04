@@ -34,7 +34,7 @@ async function loadQuestion(answer = "") {
     const data = await res.json();
     console.log("RAW RESPONSE:", data);
 
-    let text = data?.output?.[0]?.content?.[0]?.text;
+   let text = data?.text || JSON.stringify(data);
 
     if (!text) {
       console.error("Invalid response:", data);
