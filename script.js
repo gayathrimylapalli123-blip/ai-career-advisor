@@ -1,5 +1,14 @@
 const WEBHOOK_URL = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793";
+let stage = "education";
 
+let userData = {
+  education: null,
+  skills: [],
+  interests: [],
+  experience: null
+};
+
+let conversationHistory = [];
 // Start button click
 function start() {
   loadQuestion("");
@@ -8,36 +17,36 @@ function start() {
 // Load question from n8n
 async function loadQuestion(answer = "") {
   try {
-  const url = WEBHOOK_URL + "?answer=" + encodeURIComponent(answer);
 
-const res = await fetch(WEBHOOK_URL, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ answer })
-});
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        answer: answer,
+        stage: stage,
+        userData: userData,
+        history: conversationHistory
+      })
+    });
 
     const data = await res.json();
     console.log("RAW RESPONSE:", data);
 
-    // 🔥 Extract text from n8n response
-   let text = data?.output?.[0]?.content?.[0]?.text;
+    let text = data?.output?.[0]?.content?.[0]?.text;
 
-if (!text) {
-  console.error("Invalid response:", data);
-  alert("Invalid response from AI");
-  return;
-}
+    if (!text) {
+      console.error("Invalid response:", data);
+      alert("Invalid response from AI");
+      return;
+    }
 
-    // 🔥 Clean markdown (```json ... ```)
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
-    // 🔥 Convert to JSON
     const parsed = JSON.parse(text);
     console.log("PARSED DATA:", parsed);
 
-    // 🔥 Decide what to show
     if (parsed.type === "question") {
       showQuestion(parsed);
     } else if (parsed.type === "result") {
@@ -63,9 +72,35 @@ function showQuestion(data) {
     btn.innerText = option;
     btn.className = "option-btn";
 
-    btn.onclick = () => {
-      loadQuestion(option);
-    };
+   btn.onclick = () => {
+
+  // Update state BEFORE sending
+  if (stage === "education") {
+    userData.education = option;
+    stage = "skills";
+  } 
+  else if (stage === "skills") {
+    userData.skills.push(option);
+    stage = "interests";
+  } 
+  else if (stage === "interests") {
+    userData.interests.push(option);
+    stage = "experience";
+  } 
+  else if (stage === "experience") {
+    userData.experience = option;
+    stage = "result";
+  }
+
+  // Save history
+  conversationHistory.push({
+    stage: stage,
+    answer: option
+  });
+
+  // Send to AI
+  loadQuestion(option);
+};
 
     optionsEl.appendChild(btn);
   });
