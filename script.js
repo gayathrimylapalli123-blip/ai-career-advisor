@@ -40,7 +40,27 @@ async function loadQuestion(answer = "") {
     console.log("✅ RESPONSE FROM n8n:", data);
 
     // 🔥 HANDLE ARRAY OR OBJECT RESPONSE
-    const response = Array.isArray(data) ? data[0] : data;
+    let response = Array.isArray(data) ? data[0] : data;
+
+// 🧠 FIX: handle string JSON
+if (typeof response === "string") {
+  try {
+    response = JSON.parse(response);
+  } catch (e) {
+    console.error("First parse failed:", response);
+  }
+}
+
+// 🧠 EXTRA FIX: if still string, parse again
+if (typeof response === "string") {
+  try {
+    response = JSON.parse(response);
+  } catch (e) {
+    console.error("Second parse failed:", response);
+  }
+}
+
+console.log("✅ FINAL PARSED:", response);
 
     if (!response) {
       throw new Error("Empty response");
