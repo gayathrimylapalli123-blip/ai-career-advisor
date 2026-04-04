@@ -1,7 +1,5 @@
 const WEBHOOK_URL = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793";
 
-console.log("✅ NEW VERSION LOADED");
-
 let stage = "education";
 
 let userData = {
@@ -18,11 +16,9 @@ function start() {
   loadQuestion("");
 }
 
-// Main function
+// 🔥 MAIN FUNCTION (FIXED)
 async function loadQuestion(answer = "") {
   try {
-    console.log("📤 Sending request...");
-
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: {
@@ -36,48 +32,23 @@ async function loadQuestion(answer = "") {
       })
     });
 
-    console.log("📡 Status:", res.status);
-
     if (!res.ok) {
       throw new Error("Server error");
     }
 
     const data = await res.json();
-    console.log("📥 RAW RESPONSE:", data);
+    console.log("✅ RESPONSE FROM n8n:", data);
 
-    // ✅ Expecting this from n8n: { text: "..." }
-    let text = data.text;
-
-    if (!text) {
-      console.error("❌ FULL RESPONSE:", data);
-      alert("No response from AI");
-      return;
-    }
-
-    // Clean markdown
-    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-
-    let parsed;
-
-    try {
-      parsed = JSON.parse(text);
-    } catch (err) {
-      console.error("❌ JSON PARSE ERROR:", text);
-      alert("Invalid AI response format");
-      return;
-    }
-
-    console.log("✅ PARSED DATA:", parsed);
-
-    // ✅ Update stage from AI (IMPORTANT)
-    if (parsed.next_stage) {
-      stage = parsed.next_stage;
-    }
-
-    if (parsed.type === "question") {
-      showQuestion(parsed);
-    } else if (parsed.type === "result") {
-      showResult(parsed);
+    // ✅ DIRECTLY USE JSON (NO parsing needed)
+    if (data.type === "question") {
+      showQuestion(data);
+    } 
+    else if (data.type === "result") {
+      showResult(data);
+    } 
+    else {
+      console.error("Unexpected format:", data);
+      alert("Invalid AI response");
     }
 
   } catch (err) {
@@ -105,25 +76,28 @@ function showQuestion(data) {
   });
 }
 
-// Handle answer
+// Handle answer + state update
 function handleAnswer(option) {
 
-  // Update local state (backup safety)
   if (stage === "education") {
     userData.education = option;
+    stage = "skills";
   } 
   else if (stage === "skills") {
     if (!userData.skills.includes(option)) {
       userData.skills.push(option);
     }
+    stage = "interests";
   } 
   else if (stage === "interests") {
     if (!userData.interests.includes(option)) {
       userData.interests.push(option);
     }
+    stage = "experience";
   } 
   else if (stage === "experience") {
     userData.experience = option;
+    stage = "result";
   }
 
   // Save history
@@ -132,14 +106,10 @@ function handleAnswer(option) {
     answer: option
   });
 
-  // Show loading
-  document.getElementById("options").innerHTML = "<p>Loading...</p>";
-
-  // Call next question
   loadQuestion(option);
 }
 
-// Show result
+// Show final result
 function showResult(data) {
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
