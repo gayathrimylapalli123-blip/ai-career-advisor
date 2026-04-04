@@ -38,62 +38,40 @@ async function loadQuestion(answer = "") {
 
     let data = await res.json();
 
-    console.log("RESPONSE FROM n8n:", data);
+    console.log("RAW RESPONSE:", data);
 
-    // 🔥 FIX 1: array
-    if (Array.isArray(data)) {
+    // ✅ UNIVERSAL CLEANING (handles ALL n8n formats)
+    while (Array.isArray(data)) {
       data = data[0];
     }
 
-    // 🔥 FIX 2: string JSON
-    if (typeof data === "string") {
-      try {
-        data = JSON.parse(data);
-      } catch (e) {}
+    if (data && data.json) {
+      data = data.json;
     }
 
-    // 🔥 FIX 3: again array
-    if (Array.isArray(data)) {
+    while (Array.isArray(data)) {
       data = data[0];
     }
 
-    console.log("FINAL CLEAN DATA:", data);
+    console.log("FINAL CLEAN OBJECT:", data);
 
+    // ✅ Validate
     if (!data || typeof data !== "object") {
       alert("Invalid AI response");
       return;
     }
 
-   // ✅ FORCE CLEAN STRUCTURE
-
-// if array → take first
-if (Array.isArray(data)) {
-  data = data[0];
-}
-
-// if wrapped inside another object (n8n sometimes does this)
-if (data && data.json) {
-  data = data.json;
-}
-
-// if still array again
-if (Array.isArray(data)) {
-  data = data[0];
-}
-
-console.log("FINAL FIXED DATA:", data);
-
-// ✅ NOW SAFE CHECK
-if (data && data.type === "question") {
-  showQuestion(data);
-} 
-else if (data && data.type === "result") {
-  showResult(data);
-} 
-else {
-  console.error("Still wrong format:", data);
-  alert("Invalid AI response type");
-}
+    // ✅ Route response
+    if (data.type === "question") {
+      showQuestion(data);
+    } 
+    else if (data.type === "result") {
+      showResult(data);
+    } 
+    else {
+      console.error("UNKNOWN STRUCTURE:", data);
+      alert("Invalid AI response type");
+    }
 
   } catch (err) {
     console.error("FETCH ERROR:", err);
