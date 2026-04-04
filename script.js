@@ -57,29 +57,31 @@ async function loadQuestion(answer = "") {
       data = data[0];
     }
 
-    console.log("FINAL CLEAN DATA:", data);
+    // 🧠 FINAL FIX: ALWAYS extract object from array
+if (Array.isArray(data)) {
+  data = data[0];
+}
 
-    // ❌ stop error if still invalid
-    if (!data || typeof data !== "object") {
-      console.error("Invalid format:", data);
-      alert("Invalid AI response");
-      return;
-    }
+// AFTER ALL PARSING
 
-    // ✅ FLOW CONTROL
-    if (data.type === "question") {
-      showQuestion(data);
-    } else if (data.type === "result") {
-      showResult(data);
-    } else {
-      console.error("Unknown type:", data);
-      alert("Invalid AI response type");
-    }
+if (Array.isArray(data)) {
+  data = data[0];
+}
 
-  } catch (err) {
-    console.error("FETCH ERROR:", err);
-    alert("Error connecting to AI");
-  }
+console.log("FINAL CLEAN DATA:", data);
+
+if (!data || typeof data !== "object") {
+  alert("Invalid AI response");
+  return;
+}
+
+if (data && data.type === "question") {
+  showQuestion(data);
+} else if (data && data.type === "result") {
+  showResult(data);
+} else {
+  console.error("Unknown type:", data);
+  alert("Invalid AI response type");
 }
 
 // Show question
