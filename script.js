@@ -1,4 +1,5 @@
 const WEBHOOK_URL = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793";
+
 let stage = "education";
 
 let userData = {
@@ -9,15 +10,15 @@ let userData = {
 };
 
 let conversationHistory = [];
-// Start button click
+
+// Start button
 function start() {
   loadQuestion("");
 }
 
-// Load question from n8n
+// Main function
 async function loadQuestion(answer = "") {
   try {
-
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: {
@@ -31,20 +32,45 @@ async function loadQuestion(answer = "") {
       })
     });
 
+    if (!res.ok) {
+      throw new Error("Server error");
+    }
+
     const data = await res.json();
     console.log("RAW RESPONSE:", data);
 
-   let text = data?.text || JSON.stringify(data);
+    // 🔥 Handle different response formats safely
+    let text = null;
 
-    if (!text) {
-      console.error("Invalid response:", data);
+    if (data.text) {
+      text = data.text;
+    } else if (data.output) {
+      text = data.output[0]?.content[0]?.text;
+    } else {
+      console.error("Unknown response format:", data);
       alert("Invalid response from AI");
       return;
     }
 
+    if (!text) {
+      console.error("No text found:", data);
+      alert("No response from AI");
+      return;
+    }
+
+    // Clean markdown if exists
     text = text.replace(/```json/g, "").replace(/```/g, "").trim();
 
-    const parsed = JSON.parse(text);
+    let parsed;
+
+    try {
+      parsed = JSON.parse(text);
+    } catch (e) {
+      console.error("JSON Parse Error:", text);
+      alert("Invalid AI response format");
+      return;
+    }
+
     console.log("PARSED DATA:", parsed);
 
     if (parsed.type === "question") {
@@ -54,12 +80,12 @@ async function loadQuestion(answer = "") {
     }
 
   } catch (err) {
-    console.error(err);
+    console.error("FETCH ERROR:", err);
     alert("Error connecting to AI");
   }
 }
 
-// Show question + options
+// Show question
 function showQuestion(data) {
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
@@ -72,19 +98,29 @@ function showQuestion(data) {
     btn.innerText = option;
     btn.className = "option-btn";
 
-   btn.onclick = () => {
+    btn.onclick = () => handleAnswer(option);
 
-  // Update state BEFORE sending
+    optionsEl.appendChild(btn);
+  });
+}
+
+// Handle answer + state
+function handleAnswer(option) {
+
   if (stage === "education") {
     userData.education = option;
     stage = "skills";
   } 
   else if (stage === "skills") {
-    userData.skills.push(option);
+    if (!userData.skills.includes(option)) {
+      userData.skills.push(option);
+    }
     stage = "interests";
   } 
   else if (stage === "interests") {
-    userData.interests.push(option);
+    if (!userData.interests.includes(option)) {
+      userData.interests.push(option);
+    }
     stage = "experience";
   } 
   else if (stage === "experience") {
@@ -98,12 +134,7 @@ function showQuestion(data) {
     answer: option
   });
 
-  // Send to AI
   loadQuestion(option);
-};
-
-    optionsEl.appendChild(btn);
-  });
 }
 
 // Show final result
@@ -112,6 +143,7 @@ function showResult(data) {
   const optionsEl = document.getElementById("options");
 
   questionEl.innerText = "🎯 Career Recommendation";
+
   optionsEl.innerHTML = `
     <p><strong>Role:</strong> ${data.role}</p>
     <p><strong>Skills Gap:</strong> ${data.skills_gap.join(", ")}</p>
