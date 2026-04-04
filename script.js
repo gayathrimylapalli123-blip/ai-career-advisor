@@ -60,8 +60,12 @@ if (typeof response === "string") {
   }
 }
 
-console.log("✅ FINAL PARSED:", response);
+// 🧠 FIX: if response is array, take first item
+if (Array.isArray(response)) {
+  response = response[0];
+}
 
+console.log("FINAL PARSED:", response);
     if (!response) {
       throw new Error("Empty response");
     }
