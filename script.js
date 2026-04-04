@@ -40,7 +40,18 @@ async function loadQuestion(answer = "") {
     console.log("✅ RESPONSE FROM n8n:", data);
 
     // ✅ DIRECTLY USE JSON (NO parsing needed)
-    if (data.type === "question") {
+   const response = Array.isArray(data) ? data[0] : data;
+
+if (response.type === "question") {
+  showQuestion(response);
+} 
+else if (response.type === "result") {
+  showResult(response);
+} 
+else {
+  console.error("Unexpected format:", response);
+  alert("Invalid AI response");
+}
       showQuestion(data);
     } 
     else if (data.type === "result") {
