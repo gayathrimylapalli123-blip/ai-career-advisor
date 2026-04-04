@@ -11,83 +11,78 @@ let userData = {
 
 let conversationHistory = [];
 
-// ✅ Start button
+// Start button
 function start() {
   loadQuestion("");
 }
 
-// ✅ Main function
+// Main function
 async function loadQuestion(answer = "") {
   try {
+    console.log("Sending request...");
+
     const res = await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        answer: answer,
-        stage: stage,
-        userData: userData,
+        answer,
+        stage,
+        userData,
         history: conversationHistory
       })
     });
 
-    if (!res.ok) {
-      throw new Error("Server error");
+    if (!res.ok) throw new Error("Server error");
+
+    let data = await res.json();
+
+    console.log("RESPONSE FROM n8n:", data);
+
+    // ✅ STEP 1: handle array
+    if (Array.isArray(data)) {
+      data = data[0];
     }
 
-    const data = await res.json();
-    console.log("✅ RESPONSE FROM n8n:", data);
-
-    // 🔥 HANDLE ARRAY OR OBJECT RESPONSE
-    let response = Array.isArray(data) ? data[0] : data;
-
-// 🧠 FIX: handle string JSON
-if (typeof response === "string") {
-  try {
-    response = JSON.parse(response);
-  } catch (e) {
-    console.error("First parse failed:", response);
-  }
-}
-
-// 🧠 EXTRA FIX: if still string, parse again
-if (typeof response === "string") {
-  try {
-    response = JSON.parse(response);
-  } catch (e) {
-    console.error("Second parse failed:", response);
-  }
-}
-
-// 🧠 FIX: if response is array, take first item
-if (Array.isArray(response)) {
-  response = response[0];
-}
-
-console.log("FINAL PARSED:", response);
-    if (!response) {
-      throw new Error("Empty response");
+    // ✅ STEP 2: handle string (double JSON)
+    if (typeof data === "string") {
+      try {
+        data = JSON.parse(data);
+      } catch (e) {}
     }
 
-    if (response.type === "question") {
-      showQuestion(response);
-    } 
-    else if (response.type === "result") {
-      showResult(response);
-    } 
-    else {
-      console.error("❌ Unexpected format:", response);
+    // ✅ STEP 3: AGAIN check array (important!)
+    if (Array.isArray(data)) {
+      data = data[0];
+    }
+
+    console.log("FINAL CLEAN DATA:", data);
+
+    // ❌ stop error if still invalid
+    if (!data || typeof data !== "object") {
+      console.error("Invalid format:", data);
       alert("Invalid AI response");
+      return;
+    }
+
+    // ✅ FLOW CONTROL
+    if (data.type === "question") {
+      showQuestion(data);
+    } else if (data.type === "result") {
+      showResult(data);
+    } else {
+      console.error("Unknown type:", data);
+      alert("Invalid AI response type");
     }
 
   } catch (err) {
-    console.error("❌ ERROR:", err);
+    console.error("FETCH ERROR:", err);
     alert("Error connecting to AI");
   }
 }
 
-// ✅ Show question
+// Show question
 function showQuestion(data) {
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
@@ -106,7 +101,7 @@ function showQuestion(data) {
   });
 }
 
-// ✅ Handle answer + state
+// Handle answer
 function handleAnswer(option) {
 
   if (stage === "education") {
@@ -131,14 +126,14 @@ function handleAnswer(option) {
   }
 
   conversationHistory.push({
-    stage: stage,
+    stage,
     answer: option
   });
 
   loadQuestion(option);
 }
 
-// ✅ Show result
+// Show result
 function showResult(data) {
   const questionEl = document.getElementById("question");
   const optionsEl = document.getElementById("options");
