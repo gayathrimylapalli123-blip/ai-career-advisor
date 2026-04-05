@@ -54,18 +54,27 @@ async function loadQuestion(answer = "") {
     }
 
     console.log("FINAL CLEAN OBJECT:", data);
+
+    // ✅ FINAL SAFETY UNWRAP
     if (Array.isArray(data)) {
-  data = data[0];
-}console.log("FINAL FINAL DATA:", data);
+      data = data[0];
+    }
 
+    console.log("FINAL FINAL DATA:", data);
 
-    
+    // ✅ VALIDATION
+    if (!data || typeof data !== "object") {
+      alert("Invalid AI response");
+      return;
+    }
 
-    // ✅ Route response
-    if (data.type === "question") {
+    // ✅ HANDLE TYPE (fixes spacing issues)
+    const type = data.type?.trim().toLowerCase();
+
+    if (type === "question") {
       showQuestion(data);
     } 
-    else if (data.type === "result") {
+    else if (type === "result") {
       showResult(data);
     } 
     else {
