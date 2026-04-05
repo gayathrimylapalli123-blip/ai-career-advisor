@@ -54,12 +54,12 @@ async function loadQuestion(answer = "") {
     }
 
     console.log("FINAL CLEAN OBJECT:", data);
+    if (Array.isArray(data)) {
+  data = data[0];
+}console.log("FINAL FINAL DATA:", data);
 
-    // ✅ Validate
-    if (!data || typeof data !== "object") {
-      alert("Invalid AI response");
-      return;
-    }
+
+    
 
     // ✅ Route response
     if (data.type === "question") {
