@@ -112,26 +112,42 @@ try {
 console.log("🚀 FINAL USABLE DATA:", data);
 
 // ✅ FINAL CHECK
-if (data?.type === "question") {
+// 🔥 FINAL GUARANTEED PARSER
+
+try {
+
+  // STEP 1: extract nested OpenAI response
+  if (data.output?.[0]?.content?.[0]?.text) {
+    data = JSON.parse(data.output[0].content[0].text);
+  }
+
+  // STEP 2: if still string
+  else if (typeof data === "string") {
+    data = JSON.parse(data);
+  }
+
+  // STEP 3: if wrapped
+  else if (data.json) {
+    data = data.json;
+  }
+
+} catch (e) {
+  console.error("PARSE ERROR:", e);
+}
+
+console.log("🔥 FINAL DATA:", data);
+
+// ✅ STRICT CHECK
+if (data && data.type === "question") {
   showQuestion(data);
 } 
-else if (data?.type === "result") {
+else if (data && data.type === "result") {
   showResult(data);
 } 
 else {
-  console.error("❌ STILL INVALID:", data);
+  console.error("❌ FINAL ERROR:", data);
   alert("Invalid AI response type");
 }
-    if (type === "question") {
-      showQuestion(data);
-    } 
-    else if (type === "result") {
-      showResult(data);
-    } 
-    else {
-      console.error("UNKNOWN STRUCTURE:", data);
-      alert("Invalid AI response type");
-    }
 
   } catch (err) {
     console.error("FETCH ERROR:", err);
