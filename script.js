@@ -69,8 +69,32 @@ async function loadQuestion(answer = "") {
     }
 
     // ✅ HANDLE TYPE (fixes spacing issues)
-    const type = data.type?.trim().toLowerCase();
+   // 🔥 FORCE EXTRACT REAL DATA (FINAL FIX)
 
+if (!data.type && data.output) {
+  try {
+    const text = data.output[0].content[0].text;
+    data = JSON.parse(text);
+  } catch (e) {
+    console.error("Deep parse failed:", e);
+  }
+}
+
+console.log("FINAL FIXED DATA:", data);
+
+// ✅ NOW SAFE
+const type = data.type?.trim().toLowerCase();
+
+if (type === "question") {
+  showQuestion(data);
+} 
+else if (type === "result") {
+  showResult(data);
+} 
+else {
+  console.error("STILL WRONG:", data);
+  alert("Invalid AI response type");
+}
     if (type === "question") {
       showQuestion(data);
     } 
