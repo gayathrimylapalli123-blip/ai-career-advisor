@@ -1,24 +1,41 @@
-const WEBHOOK_URL = "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793";
+// ==========================
+// GLOBAL STATE
+// ==========================
+let currentStage = "education";  // controls flow
+let answers = [];                // store user answers
 
-// 👉 Start button click
+
+// ==========================
+// START APP
+// ==========================
 function startApp() {
-  loadQuestion();
+  console.log("App started");
+  fetchNextQuestion(null);
 }
 
-// 👉 Call backend
-async function loadQuestion() {
+
+// ==========================
+// FETCH QUESTION FROM n8n
+// ==========================
+async function fetchNextQuestion(answer) {
   try {
     console.log("Sending request...");
 
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch("https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        answer: answer,
+        stage: currentStage,
+        history: answers
+      })
     });
 
     const data = await response.json();
-
     console.log("RESPONSE DATA:", data);
 
-    // Show question
     showQuestion(data);
 
   } catch (error) {
@@ -27,67 +44,62 @@ async function loadQuestion() {
   }
 }
 
-// 👉 Render question + options
-function showQuestion(data) {
-  const container = document.querySelector(".card");
 
-  // Replace UI
+// ==========================
+// DISPLAY QUESTION
+// ==========================
+function showQuestion(data) {
+  const container = document.getElementById("app");
+
+  // RESULT SCREEN
+  if (data.type === "result") {
+    container.innerHTML = `
+      <h2>🎯 Career Suggestions</h2>
+      <p>${data.message}</p>
+    `;
+    return;
+  }
+
+  // QUESTION SCREEN
+  let optionsHTML = "";
+
+  if (Array.isArray(data.options)) {
+    data.options.forEach(option => {
+      optionsHTML += `
+        <button class="option-btn" onclick="handleAnswer('${option}')">
+          ${option}
+        </button>
+      `;
+    });
+  }
+
   container.innerHTML = `
     <h2>🚀 AI Career Advisor</h2>
     <p>${data.question}</p>
-    <div id="options"></div>
+    <div class="options">${optionsHTML}</div>
   `;
-
-  const optionsContainer = document.getElementById("options");
-
-  // Ensure options is always an array
-  let options = data.options;
-
-  if (!Array.isArray(options)) {
-    try {
-      options = JSON.parse(options);
-    } catch (e) {
-      console.error("Options parsing failed:", e);
-      options = [];
-    }
-  }
-
-  // Render buttons
-  options.forEach(option => {
-    const btn = document.createElement("button");
-    btn.innerText = option;
-    btn.className = "option-btn";
-
-    btn.onclick = () => handleAnswer(option);
-
-    optionsContainer.appendChild(btn);
-  });
 }
 
-// 👉 Handle click
-async function handleAnswer(selectedOption) {
+
+// ==========================
+// HANDLE USER ANSWER
+// ==========================
+function handleAnswer(selectedOption) {
   console.log("User selected:", selectedOption);
 
-  try {
-    const response = await fetch(WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        answer: selectedOption
-      })
-    });
+  // store answer
+  answers.push(selectedOption);
 
-    const data = await response.json();
-
-    console.log("NEXT QUESTION:", data);
-
-    // 👉 show next question
-    showQuestion(data);
-
-  } catch (error) {
-    console.error("ERROR:", error);
-    alert("Error getting next question");
+  // update stage
+  if (currentStage === "education") {
+    currentStage = "field";
+  } 
+  else if (currentStage === "field") {
+    currentStage = "skills";
+  } 
+  else if (currentStage === "skills") {
+    currentStage = "result";
   }
+
+  fetchNextQuestion(selectedOption);
 }
