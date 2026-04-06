@@ -67,14 +67,18 @@ function showQuestion(data) {
     return;
   }
 
-  // ✅ DIRECTLY use options (NO transformation)
-  const options = data.options;
+  // ✅ BULLETPROOF OPTIONS FIX
+  const options = Array.isArray(data.options)
+    ? data.options
+    : typeof data.options === "string"
+    ? JSON.parse(data.options)
+    : [];
 
   console.log("OPTIONS:", options);
 
   let optionsHTML = "";
 
-  if (options && options.length > 0) {
+  if (options.length > 0) {
     options.forEach(option => {
       optionsHTML += `
         <button onclick="handleAnswer('${option}')"
@@ -84,7 +88,7 @@ function showQuestion(data) {
       `;
     });
   } else {
-    console.warn("❌ OPTIONS LOST HERE");
+    console.warn("❌ OPTIONS STILL INVALID:", data.options);
   }
 
   container.innerHTML = `
