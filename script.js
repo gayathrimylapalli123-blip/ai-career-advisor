@@ -48,16 +48,19 @@ async function fetchNextQuestion(answer) {
 // ==========================
 // DISPLAY QUESTION (SAFE)
 // ==========================
-function showQuestion(data) {
+function showQuestion(rawData) {
 
-  let container = document.getElementById("app");
+  console.log("RAW DATA:", rawData);
+
+  // ✅ FIX: ensure correct data extraction
+  const data = rawData.data ? rawData.data : rawData;
+
+  console.log("FINAL DATA:", data);
+
+  let container = document.querySelector(".card");
 
   if (!container) {
-    container = document.querySelector(".card");
-  }
-
-  if (!container) {
-    console.error("No container found");
+    console.error("Container not found");
     return;
   }
 
@@ -70,34 +73,26 @@ function showQuestion(data) {
     return;
   }
 
-  // BUILD OPTIONS
+  // ✅ IMPORTANT FIX HERE
+  const options = Array.isArray(data.options) ? data.options : [];
+
+  console.log("OPTIONS ARRAY:", options);
+
   let optionsHTML = "";
 
-  if (Array.isArray(data.options) && data.options.length > 0) {
-    data.options.forEach(option => {
+  if (options.length > 0) {
+    options.forEach(option => {
       optionsHTML += `
-        <button 
-          style="
-            width:100%;
-            padding:12px;
-            margin:8px 0;
-            border:none;
-            border-radius:8px;
-            background:#e0e0e0;
-            cursor:pointer;
-            font-size:14px;
-          "
-          onclick="handleAnswer('${option}')"
-        >
+        <button onclick="handleAnswer('${option}')"
+          style="width:100%;padding:12px;margin:8px 0;border:none;border-radius:8px;background:#e0e0e0;cursor:pointer;">
           ${option}
         </button>
       `;
     });
   } else {
-    console.warn("No options received");
+    console.warn("⚠️ No options received (after fix)");
   }
 
-  // RENDER UI
   container.innerHTML = `
     <h2>🚀 AI Career Advisor</h2>
     <p>${data.question}</p>
