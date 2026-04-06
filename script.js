@@ -48,12 +48,7 @@ async function fetchNextQuestion(answer) {
 // ==========================
 // DISPLAY QUESTION (SAFE)
 // ==========================
-function showQuestion(rawData) {
-
-  console.log("RAW DATA:", rawData);
-
-  // ✅ FIX: ensure correct data extraction
-  const data = rawData.data ? rawData.data : rawData;
+function showQuestion(data) {
 
   console.log("FINAL DATA:", data);
 
@@ -64,7 +59,6 @@ function showQuestion(rawData) {
     return;
   }
 
-  // RESULT
   if (data.type === "result") {
     container.innerHTML = `
       <h2>🎯 Career Suggestions</h2>
@@ -73,14 +67,14 @@ function showQuestion(rawData) {
     return;
   }
 
-  // ✅ IMPORTANT FIX HERE
-  const options = Array.isArray(data.options) ? data.options : [];
+  // ✅ DIRECTLY use options (NO transformation)
+  const options = data.options;
 
-  console.log("OPTIONS ARRAY:", options);
+  console.log("OPTIONS:", options);
 
   let optionsHTML = "";
 
-  if (options.length > 0) {
+  if (options && options.length > 0) {
     options.forEach(option => {
       optionsHTML += `
         <button onclick="handleAnswer('${option}')"
@@ -90,7 +84,7 @@ function showQuestion(rawData) {
       `;
     });
   } else {
-    console.warn("⚠️ No options received (after fix)");
+    console.warn("❌ OPTIONS LOST HERE");
   }
 
   container.innerHTML = `
