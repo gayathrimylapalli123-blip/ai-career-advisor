@@ -135,17 +135,50 @@ try {
   console.error("PARSE ERROR:", e);
 }
 
-console.log("🔥 FINAL DATA:", data);
+// 🔥 ABSOLUTE FINAL FIX
 
-// ✅ STRICT CHECK
-if (data && data.type === "question") {
+try {
+
+  if (data.output?.[0]?.content?.[0]?.text) {
+    data = JSON.parse(data.output[0].content[0].text);
+  }
+
+  else if (typeof data === "string") {
+    data = JSON.parse(data);
+  }
+
+  if (!data.type && data.text) {
+    data = JSON.parse(data.text);
+  }
+
+  if (!data.type && data.json) {
+    data = data.json;
+  }
+
+} catch (e) {
+  console.error("❌ PARSE FAILED:", e);
+}
+
+console.log("✅ FINAL DATA AFTER FIX:", data);
+
+// 🔥 FORCE TYPE IF MISSING
+if (!data.type) {
+  if (data.question && data.options) {
+    data.type = "question";
+  } else if (data.role) {
+    data.type = "result";
+  }
+}
+
+// ✅ FINAL ROUTING
+if (data.type === "question") {
   showQuestion(data);
 } 
-else if (data && data.type === "result") {
+else if (data.type === "result") {
   showResult(data);
 } 
 else {
-  console.error("❌ FINAL ERROR:", data);
+  console.error("🚨 STILL BROKEN:", data);
   alert("Invalid AI response type");
 }
 
