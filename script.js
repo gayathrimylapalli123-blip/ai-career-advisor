@@ -196,15 +196,16 @@ function showQuestion(data) {
   questionEl.innerText = data.question;
   optionsEl.innerHTML = "";
 
-  data.options.forEach(option => {
-    const btn = document.createElement("button");
-    btn.innerText = option;
-    btn.className = "option-btn";
+ let options = data.options;
 
-    btn.onclick = () => handleAnswer(option);
+// 🔥 fix: convert string → array
+if (typeof options === "string") {
+  options = JSON.parse(options);
+}
 
-    optionsEl.appendChild(btn);
-  });
+options.forEach(option => {
+  // your existing code
+});
 }
 
 // ✅ Handle answer
