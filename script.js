@@ -65,9 +65,29 @@ function showQuestion(data) {
 }
 
 // 👉 Handle click
-function handleAnswer(selectedOption) {
+async function handleAnswer(selectedOption) {
   console.log("User selected:", selectedOption);
 
-  // You can extend this later (next question, API call, etc.)
-  alert(`You selected: ${selectedOption}`);
+  try {
+    const response = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        answer: selectedOption
+      })
+    });
+
+    const data = await response.json();
+
+    console.log("NEXT QUESTION:", data);
+
+    // 👉 show next question
+    showQuestion(data);
+
+  } catch (error) {
+    console.error("ERROR:", error);
+    alert("Error getting next question");
+  }
 }
