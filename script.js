@@ -1,8 +1,8 @@
 // ==========================
 // GLOBAL STATE
 // ==========================
-let currentStage = "education";  // controls flow
-let answers = [];                // store user answers
+let currentStage = "education";
+let answers = [];
 
 
 // ==========================
@@ -46,12 +46,25 @@ async function fetchNextQuestion(answer) {
 
 
 // ==========================
-// DISPLAY QUESTION
+// DISPLAY QUESTION (SAFE)
 // ==========================
 function showQuestion(data) {
-  const container = document.getElementById("app");
 
+  // ✅ try both possible containers
+  let container = document.getElementById("app");
+
+  if (!container) {
+    container = document.querySelector(".card"); // fallback (your UI)
+  }
+
+  if (!container) {
+    console.error("No container found to render UI");
+    return;
+  }
+
+  // ==========================
   // RESULT SCREEN
+  // ==========================
   if (data.type === "result") {
     container.innerHTML = `
       <h2>🎯 Career Suggestions</h2>
@@ -60,7 +73,9 @@ function showQuestion(data) {
     return;
   }
 
+  // ==========================
   // QUESTION SCREEN
+  // ==========================
   let optionsHTML = "";
 
   if (Array.isArray(data.options)) {
@@ -87,10 +102,9 @@ function showQuestion(data) {
 function handleAnswer(selectedOption) {
   console.log("User selected:", selectedOption);
 
-  // store answer
   answers.push(selectedOption);
 
-  // update stage
+  // stage flow control
   if (currentStage === "education") {
     currentStage = "field";
   } 
