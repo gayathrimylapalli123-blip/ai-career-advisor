@@ -67,12 +67,18 @@ function showQuestion(data) {
     return;
   }
 
-  // ✅ BULLETPROOF OPTIONS FIX
-  const options = Array.isArray(data.options)
-    ? data.options
-    : typeof data.options === "string"
-    ? JSON.parse(data.options)
-    : [];
+  // ✅ SAFE OPTIONS PARSING
+  let options = [];
+
+  try {
+    if (Array.isArray(data.options)) {
+      options = data.options;
+    } else if (typeof data.options === "string") {
+      options = JSON.parse(data.options);
+    }
+  } catch (e) {
+    console.error("Options parsing failed:", e);
+  }
 
   console.log("OPTIONS:", options);
 
@@ -80,15 +86,17 @@ function showQuestion(data) {
 
   if (options.length > 0) {
     options.forEach(option => {
+
+      // ✅ SAFE STRING (FIXES YOUR ERROR)
+      const safeOption = option.replace(/'/g, "\\'");
+
       optionsHTML += `
-        <button onclick="handleAnswer('${option}')"
+        <button onclick="handleAnswer('${safeOption}')"
           style="width:100%;padding:12px;margin:8px 0;border:none;border-radius:8px;background:#e0e0e0;cursor:pointer;">
           ${option}
         </button>
       `;
     });
-  } else {
-    console.warn("❌ OPTIONS STILL INVALID:", data.options);
   }
 
   container.innerHTML = `
