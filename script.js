@@ -83,16 +83,43 @@ if (!data.type && data.output) {
 console.log("FINAL FIXED DATA:", data);
 
 // ✅ NOW SAFE
-const type = data.type?.trim().toLowerCase();
+// 🔥 FINAL UNIVERSAL FIX (handles ALL n8n + OpenAI formats)
 
-if (type === "question") {
+try {
+  // If already correct, skip
+  if (!data.type) {
+
+    // Case 1: OpenAI/n8n nested structure
+    if (data.output?.[0]?.content?.[0]?.text) {
+      data = JSON.parse(data.output[0].content[0].text);
+    }
+
+    // Case 2: string response
+    else if (typeof data === "string") {
+      data = JSON.parse(data);
+    }
+
+    // Case 3: wrapped json
+    else if (data.json) {
+      data = data.json;
+    }
+  }
+
+} catch (e) {
+  console.error("FINAL PARSE ERROR:", e);
+}
+
+console.log("🚀 FINAL USABLE DATA:", data);
+
+// ✅ FINAL CHECK
+if (data?.type === "question") {
   showQuestion(data);
 } 
-else if (type === "result") {
+else if (data?.type === "result") {
   showResult(data);
 } 
 else {
-  console.error("STILL WRONG:", data);
+  console.error("❌ STILL INVALID:", data);
   alert("Invalid AI response type");
 }
     if (type === "question") {
