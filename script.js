@@ -1,8 +1,8 @@
 // ==========================
 // GLOBAL STATE
 // ==========================
-let currentStage = "education";
 let answers = [];
+let questionCount = 0;
 
 
 // ==========================
@@ -11,9 +11,9 @@ let answers = [];
 function startApp() {
   console.log("App started");
 
-  // ✅ reset everything properly
-  currentStage = "education";
+  // ✅ reset everything
   answers = [];
+  questionCount = 0;
 
   fetchNextQuestion(null);
 }
@@ -25,6 +25,8 @@ function startApp() {
 async function fetchNextQuestion(answer) {
   try {
     console.log("Sending request...");
+    console.log("History:", answers);
+    console.log("Count:", questionCount);
 
     const response = await fetch("https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793", {
       method: "POST",
@@ -32,10 +34,10 @@ async function fetchNextQuestion(answer) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-  answer: answer,
-  stage: currentStage,
-  history: [...new Set(answers)] // ✅ removes duplicates
-})
+        answer: answer,
+        history: answers,
+        count: questionCount   // ✅ VERY IMPORTANT
+      })
     });
 
     const data = await response.json();
@@ -51,7 +53,7 @@ async function fetchNextQuestion(answer) {
 
 
 // ==========================
-// DISPLAY QUESTION (SAFE)
+// DISPLAY QUESTION / RESULT
 // ==========================
 function showQuestion(data) {
 
@@ -63,28 +65,34 @@ function showQuestion(data) {
     console.error("Container not found");
     return;
   }
-if (data.type === "result") {
 
-  let message = data.message;
+  // ======================
+  // RESULT HANDLING
+  // ======================
+  if (data.type === "result") {
 
-  // ✅ FIX: handle string JSON response
-  if (!message && data.output) {
-    try {
-      const parsed = JSON.parse(data.output[0].content[0].text);
-      message = parsed.message;
-    } catch (e) {
-      console.error("Parsing error:", e);
+    let message = data.message;
+
+    // ✅ handle stringified JSON from n8n
+    if (!message && data.output) {
+      try {
+        const parsed = JSON.parse(data.output[0].content[0].text);
+        message = parsed.message;
+      } catch (e) {
+        console.error("Parsing error:", e);
+      }
     }
+
+    container.innerHTML = `
+      <h2>🎯 Career Suggestions</h2>
+      <p>${message || "No suggestions available"}</p>
+    `;
+    return;
   }
 
-  container.innerHTML = `
-    <h2>🎯 Career Suggestions</h2>
-    <p>${message || "No suggestions available"}</p>
-  `;
-  return;
-}
-
-  // ✅ SAFE OPTIONS PARSING
+  // ======================
+  // OPTIONS HANDLING
+  // ======================
   let options = [];
 
   try {
@@ -104,7 +112,6 @@ if (data.type === "result") {
   if (options.length > 0) {
     options.forEach(option => {
 
-      // ✅ SAFE STRING (FIXES YOUR ERROR)
       const safeOption = option.replace(/'/g, "\\'");
 
       optionsHTML += `
@@ -118,10 +125,11 @@ if (data.type === "result") {
 
   container.innerHTML = `
     <h2>🚀 AI Career Advisor</h2>
-    <p>${data.question}</p>
+    <p>${data.question || "Loading..."}</p>
     <div>${optionsHTML}</div>
   `;
 }
+
 
 // ==========================
 // HANDLE USER ANSWER
@@ -129,20 +137,10 @@ if (data.type === "result") {
 function handleAnswer(selectedOption) {
   console.log("User selected:", selectedOption);
 
-  // ✅ prevent duplicate consecutive entries
+  // ✅ avoid duplicate consecutive answers
   if (answers[answers.length - 1] !== selectedOption) {
     answers.push(selectedOption);
-  }
-
-  // stage control
-  if (currentStage === "education") {
-    currentStage = "field";
-  } 
-  else if (currentStage === "field") {
-    currentStage = "skills";
-  } 
-  else if (currentStage === "skills") {
-    currentStage = "result";
+    questionCount++;   // ✅ VERY IMPORTANT
   }
 
   fetchNextQuestion(selectedOption);
