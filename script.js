@@ -60,12 +60,14 @@ function showQuestion(data) {
   }
 
   if (data.type === "result") {
-    container.innerHTML = `
-      <h2>🎯 Career Suggestions</h2>
-      <p>${data.message}</p>
-    `;
-    return;
-  }
+  const message = data.message || "No suggestions available";
+
+  container.innerHTML = `
+    <h2>🎯 Career Suggestions</h2>
+    <p>${message}</p>
+  `;
+  return;
+}
 
   // ✅ SAFE OPTIONS PARSING
   let options = [];
