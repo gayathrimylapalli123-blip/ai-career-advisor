@@ -33,10 +33,11 @@ async function fetchNextQuestion(answer) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
+     body: JSON.stringify({
   answer: answer,
-  history: answers,
-  count: questionCount
+  stage: currentStage,
+  history: [...new Set(answers)],
+  count: answers.length   // ⭐ IMPORTANT
 })
     });
 
