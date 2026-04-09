@@ -63,19 +63,23 @@ function showQuestion(data) {
     console.error("Container not found");
     return;
   }
-if (typeof data === "string") {
-  try {
-    data = JSON.parse(data);
-  } catch (e) {
-    console.error("Invalid JSON", data);
+if (data.type === "result") {
+
+  let message = data.message;
+
+  // ✅ FIX: handle string JSON response
+  if (!message && data.output) {
+    try {
+      const parsed = JSON.parse(data.output[0].content[0].text);
+      message = parsed.message;
+    } catch (e) {
+      console.error("Parsing error:", e);
+    }
   }
-}
-  if (data.type === "result") {
-  const message = data.message || "No suggestions available";
 
   container.innerHTML = `
     <h2>🎯 Career Suggestions</h2>
-    <p>${message}</p>
+    <p>${message || "No suggestions available"}</p>
   `;
   return;
 }
