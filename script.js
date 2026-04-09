@@ -73,8 +73,8 @@ function showQuestion(data) {
   // ==========================
   if (data.type === "result") {
 
-    let message = data.message;
-
+    let career = data.career || data.message;
+let resources = data.resources || [];
     // fallback parsing (if OpenAI returns string)
     if (!message && data.output) {
       try {
