@@ -34,10 +34,10 @@ async function fetchNextQuestion(answer) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        answer: answer,
-        history: answers,
-        count: questionCount   // ✅ VERY IMPORTANT
-      })
+  answer: answer,
+  history: answers,
+  count: questionCount
+})
     });
 
     const data = await response.json();
