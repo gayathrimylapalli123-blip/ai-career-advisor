@@ -1,8 +1,8 @@
 // ==========================
 // GLOBAL STATE
 // ==========================
+let currentStage = "education";
 let answers = [];
-let questionCount = 0;
 
 
 // ==========================
@@ -11,9 +11,8 @@ let questionCount = 0;
 function startApp() {
   console.log("App started");
 
-  // ✅ reset everything
+  currentStage = "education";
   answers = [];
-  questionCount = 0;
 
   fetchNextQuestion(null);
 }
@@ -25,24 +24,25 @@ function startApp() {
 async function fetchNextQuestion(answer) {
   try {
     console.log("Sending request...");
-    console.log("History:", answers);
-    console.log("Count:", questionCount);
 
     const response = await fetch("https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-     body: JSON.stringify({
-  answer: answer,
-  stage: currentStage,
-  history: [...new Set(answers)],
-  count: answers.length   // ⭐ IMPORTANT
-})
+      body: JSON.stringify({
+        answer: answer,
+        stage: currentStage,
+        history: [...new Set(answers)],   // remove duplicates
+        count: answers.length             // ✅ VERY IMPORTANT
+      })
     });
 
     const data = await response.json();
+
     console.log("RESPONSE DATA:", data);
+    console.log("History:", answers);
+    console.log("Count:", answers.length);
 
     showQuestion(data);
 
@@ -67,14 +67,14 @@ function showQuestion(data) {
     return;
   }
 
-  // ======================
-  // RESULT HANDLING
-  // ======================
+  // ==========================
+  // RESULT SCREEN
+  // ==========================
   if (data.type === "result") {
 
     let message = data.message;
 
-    // ✅ handle stringified JSON from n8n
+    // fallback parsing (if OpenAI returns string)
     if (!message && data.output) {
       try {
         const parsed = JSON.parse(data.output[0].content[0].text);
@@ -87,13 +87,16 @@ function showQuestion(data) {
     container.innerHTML = `
       <h2>🎯 Career Suggestions</h2>
       <p>${message || "No suggestions available"}</p>
+      <button onclick="startApp()" style="margin-top:15px;padding:10px;border:none;border-radius:8px;background:#4CAF50;color:white;cursor:pointer;">
+        Restart
+      </button>
     `;
     return;
   }
 
-  // ======================
-  // OPTIONS HANDLING
-  // ======================
+  // ==========================
+  // QUESTION SCREEN
+  // ==========================
   let options = [];
 
   try {
@@ -110,19 +113,16 @@ function showQuestion(data) {
 
   let optionsHTML = "";
 
-  if (options.length > 0) {
-    options.forEach(option => {
+  options.forEach(option => {
+    const safeOption = option.replace(/'/g, "\\'");
 
-      const safeOption = option.replace(/'/g, "\\'");
-
-      optionsHTML += `
-        <button onclick="handleAnswer('${safeOption}')"
-          style="width:100%;padding:12px;margin:8px 0;border:none;border-radius:8px;background:#e0e0e0;cursor:pointer;">
-          ${option}
-        </button>
-      `;
-    });
-  }
+    optionsHTML += `
+      <button onclick="handleAnswer('${safeOption}')"
+        style="width:100%;padding:12px;margin:8px 0;border:none;border-radius:8px;background:#e0e0e0;cursor:pointer;">
+        ${option}
+      </button>
+    `;
+  });
 
   container.innerHTML = `
     <h2>🚀 AI Career Advisor</h2>
@@ -138,10 +138,23 @@ function showQuestion(data) {
 function handleAnswer(selectedOption) {
   console.log("User selected:", selectedOption);
 
-  // ✅ avoid duplicate consecutive answers
+  // prevent duplicate consecutive answers
   if (answers[answers.length - 1] !== selectedOption) {
     answers.push(selectedOption);
-    questionCount++;   // ✅ VERY IMPORTANT
+  }
+
+  // OPTIONAL stage control (AI mainly uses count)
+  if (currentStage === "education") {
+    currentStage = "field";
+  } 
+  else if (currentStage === "field") {
+    currentStage = "skills";
+  } 
+  else if (currentStage === "skills") {
+    currentStage = "advanced";
+  } 
+  else {
+    currentStage = "result";
   }
 
   fetchNextQuestion(selectedOption);
