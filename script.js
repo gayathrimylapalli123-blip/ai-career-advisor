@@ -31,11 +31,12 @@ async function fetchNextQuestion(answer) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        answer: answer,
-        stage: currentStage,
-        history: [...new Set(answers)],   // remove duplicates
-        count: answers.length             // ✅ VERY IMPORTANT
-      })
+  answer: answer,
+  stage: currentStage,
+  history: [...new Set(answers)],
+  count: answers.length,
+  forceResult: answer === "__FORCE_RESULT__"   // ✅ ADD THIS LINE
+})
     });
 
     const data = await response.json();
@@ -138,26 +139,16 @@ function showQuestion(data) {
 function handleAnswer(selectedOption) {
   console.log("User selected:", selectedOption);
 
-  // prevent duplicate consecutive answers
   if (answers[answers.length - 1] !== selectedOption) {
     answers.push(selectedOption);
   }
 
-  // OPTIONAL stage control (AI mainly uses count)
-  if (currentStage === "education") {
-    currentStage = "field";
-  } 
-  else if (currentStage === "field") {
-    currentStage = "skills";
-  } 
-  else if (currentStage === "skills") {
-    currentStage = "advanced";
-  } 
-  else {
-    currentStage = "result";
-  }
+  // 🔴 HARD STOP AT 10 (frontend guarantee)
   if (answers.length >= 10) {
-  currentStage = "result";
-}
+    console.log("Reached max questions → forcing result");
+    fetchNextQuestion("__FORCE_RESULT__");  // special signal
+    return; // ❗ do NOT continue asking questions
+  }
+
   fetchNextQuestion(selectedOption);
 }
