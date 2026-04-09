@@ -156,9 +156,8 @@ function handleAnswer(selectedOption) {
   else {
     currentStage = "result";
   }
-  if (answers.length >= 15) {
+  if (answers.length >= 10) {
   currentStage = "result";
 }
-
   fetchNextQuestion(selectedOption);
 }
