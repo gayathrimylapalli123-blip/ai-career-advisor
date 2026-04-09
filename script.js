@@ -10,6 +10,11 @@ let answers = [];
 // ==========================
 function startApp() {
   console.log("App started");
+
+  // ✅ reset everything properly
+  currentStage = "education";
+  answers = [];
+
   fetchNextQuestion(null);
 }
 
@@ -27,10 +32,10 @@ async function fetchNextQuestion(answer) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        answer: answer,
-        stage: currentStage,
-        history: answers
-      })
+  answer: answer,
+  stage: currentStage,
+  history: [...new Set(answers)] // ✅ removes duplicates
+})
     });
 
     const data = await response.json();
@@ -58,7 +63,13 @@ function showQuestion(data) {
     console.error("Container not found");
     return;
   }
-
+if (typeof data === "string") {
+  try {
+    data = JSON.parse(data);
+  } catch (e) {
+    console.error("Invalid JSON", data);
+  }
+}
   if (data.type === "result") {
   const message = data.message || "No suggestions available";
 
@@ -114,9 +125,12 @@ function showQuestion(data) {
 function handleAnswer(selectedOption) {
   console.log("User selected:", selectedOption);
 
-  answers.push(selectedOption);
+  // ✅ prevent duplicate consecutive entries
+  if (answers[answers.length - 1] !== selectedOption) {
+    answers.push(selectedOption);
+  }
 
-  // stage flow control
+  // stage control
   if (currentStage === "education") {
     currentStage = "field";
   } 
