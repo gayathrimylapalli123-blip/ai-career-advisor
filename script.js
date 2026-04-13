@@ -47,7 +47,7 @@ async function fetchNextQuestion(answer) {
 
   } catch (error) {
     console.error("FETCH ERROR:", error);
-    alert("Error connecting to AI");
+    console.error("AI Error:", error);
   }
 }
 
@@ -70,49 +70,42 @@ function showQuestion(data) {
   // ==========================
   if (data.type === "result") {
 
-    let career = data.career || data.message || "No suggestions available";
-    let resources = data.resources || [];
+  let career = data.career || data.message || "Career recommendation not available";
+  let resources = data.resources || [];
 
-    // fallback parsing (if response is string)
-    if ((!career || resources.length === 0) && data.output) {
-      try {
-        const parsed = JSON.parse(data.output[0].content[0].text);
-        career = parsed.career || parsed.message || career;
-        resources = parsed.resources || resources;
-      } catch (e) {
-        console.error("Parsing error:", e);
-      }
+  // fallback parsing (important)
+  if ((!career || career === "Career recommendation not available") && data.output) {
+    try {
+      const parsed = JSON.parse(data.output[0].content[0].text);
+      career = parsed.career || parsed.message || career;
+      resources = parsed.resources || resources;
+    } catch (e) {
+      console.error("Parsing error:", e);
     }
-
-    let resourcesHTML = "";
-
-    if (resources.length > 0) {
-      resourcesHTML = `
-        <h3 style="margin-top:20px;">📚 Recommended Learning</h3>
-        ${resources.map(r => `
-          <div style="margin:10px 0;padding:12px;background:#f3f4f6;border-radius:10px;text-align:left;">
-            <strong>${r.title}</strong><br>
-            <small>${r.platform}</small>
-            <p style="margin:6px 0;">${r.description}</p>
-            <a href="${r.link}" target="_blank" style="color:#2563eb;">
-              Start Learning →
-            </a>
-          </div>
-        `).join("")}
-      `;
-    }
-
-    container.innerHTML = `
-      <h2>🎯 Career Suggestions</h2>
-      <p style="line-height:1.6;">${career}</p>
-      ${resourcesHTML}
-      <button onclick="startApp()" style="margin-top:15px;padding:10px;border:none;border-radius:8px;background:#4CAF50;color:white;cursor:pointer;">
-        Restart
-      </button>
-    `;
-
-    return;
   }
+
+  container.innerHTML = `
+    <h2>🎯 Career Suggestions</h2>
+    <p style="line-height:1.6;">${career}</p>
+
+    ${resources.length > 0 ? `
+      <h3>📚 Learning Resources</h3>
+      ${resources.map(r => `
+        <div style="margin:10px 0;padding:10px;background:#f3f4f6;border-radius:8px;">
+          <strong>${r.title}</strong><br>
+          <small>${r.platform}</small><br>
+          <a href="${r.link}" target="_blank">Start Learning →</a>
+        </div>
+      `).join("")}
+    ` : ""}
+
+    <button onclick="startApp()" style="margin-top:15px;padding:10px;border:none;border-radius:8px;background:#4CAF50;color:white;">
+      Restart
+    </button>
+  `;
+
+  return;
+}
 
   // ==========================
   // QUESTION SCREEN
