@@ -1,66 +1,125 @@
+/* ==========================
+   GLOBAL STYLES
+========================== */
 body {
-    font-family: Arial;
-    background: linear-gradient(to right, #00c6ff, #0072ff);
-    margin: 0;
-    padding: 0;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.main {
-    text-align: center;
-    padding: 20px;
-}
-
+/* ==========================
+   MAIN CARD
+========================== */
 .card {
-  max-width: 600px;
-  width: 90%;
-  margin: auto;
-  padding: 25px;
-  border-radius: 12px;
-  background: white;
-
-  /* ✅ IMPORTANT FIX */
+  width: 420px;
   max-height: 80vh;
   overflow-y: auto;
+
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+
+  border-radius: 20px;
+  padding: 25px;
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+
+  text-align: center;
 }
 
-.chat-container {
-    width: 100%;
+/* ==========================
+   TEXT
+========================== */
+.card h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.chat-box {
-    height: 400px;
-    overflow-y: auto;
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 5px;
+.card p {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.6;
 }
 
-.user {
-    text-align: right;
-    color: blue;
-    margin: 8px;
+/* ==========================
+   BUTTONS
+========================== */
+button {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #f3f4f6;
+  color: #111;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.bot {
-    text-align: left;
-    color: green;
-    margin: 8px;
+button:hover {
+  background: #6366f1;
+  color: #fff;
 }
 
-.chat-input {
-    display: flex;
-    margin-top: 10px;
+button:focus {
+  outline: none;
+  background: #6366f1;
+  color: #fff;
 }
 
-.chat-input input {
-    flex: 1;
-    padding: 10px;
+/* ==========================
+   RESULT SECTION
+========================== */
+.result-box {
+  text-align: left;
+  margin-top: 15px;
 }
 
-.chat-input button {
-    padding: 10px;
-    background: #0072ff;
-    color: white;
-    border: none;
-    cursor: pointer;
+.resource-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 12px;
+
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.resource-card strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.resource-card small {
+  color: #666;
+}
+
+.resource-card a {
+  display: inline-block;
+  margin-top: 6px;
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.resource-card a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================
+   SCROLLBAR
+========================== */
+.card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card::-webkit-scrollbar-thumb {
+  background: #6366f1;
+  border-radius: 10px;
 }
