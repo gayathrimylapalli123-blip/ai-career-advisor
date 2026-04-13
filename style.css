@@ -1,37 +1,36 @@
 /* ==========================
-   GLOBAL STYLES
+   GLOBAL
 ========================== */
 body {
   margin: 0;
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #3b82f6, #6366f1, #8b5cf6);
-  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
 }
 
 /* ==========================
-   MAIN CARD
+   CARD (GLASS EFFECT)
 ========================== */
 .card {
   width: 420px;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
 
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(12px);
-
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   padding: 25px;
 
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 
   text-align: center;
+  animation: fadeIn 0.6s ease;
 }
 
 /* ==========================
-   TEXT
+   HEADINGS
 ========================== */
 .card h2 {
   font-size: 22px;
@@ -41,75 +40,114 @@ body {
 
 .card p {
   font-size: 15px;
-  color: #444;
-  line-height: 1.6;
+  color: #555;
+  margin-bottom: 15px;
 }
 
 /* ==========================
-   BUTTONS
+   OPTION BUTTONS (MAIN STYLE)
 ========================== */
-button {
+.option-btn {
   width: 100%;
   padding: 12px;
   margin: 8px 0;
 
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
 
-  background: #f3f4f6;
-  color: #111;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Hover effect like that site */
+.option-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* Click effect */
+.option-btn:active {
+  transform: scale(0.96);
+}
+
+/* ==========================
+   PRIMARY BUTTON (START / RESTART)
+========================== */
+button {
+  margin-top: 15px;
+  padding: 12px;
+  width: 100%;
+
+  border: none;
+  border-radius: 12px;
+
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  font-weight: 600;
 
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 button:hover {
-  background: #6366f1;
-  color: #fff;
-}
-
-button:focus {
-  outline: none;
-  background: #6366f1;
-  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
 /* ==========================
-   RESULT SECTION
+   RESOURCE CARDS
 ========================== */
-.result-box {
-  text-align: left;
-  margin-top: 15px;
-}
-
 .resource-card {
   background: #ffffff;
   border-radius: 12px;
   padding: 12px;
   margin-top: 12px;
 
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+
+  transition: 0.3s;
 }
 
-.resource-card strong {
-  display: block;
-  margin-bottom: 4px;
-}
-
-.resource-card small {
-  color: #666;
+.resource-card:hover {
+  transform: translateY(-3px);
 }
 
 .resource-card a {
-  display: inline-block;
-  margin-top: 6px;
   color: #4f46e5;
-  text-decoration: none;
   font-weight: 500;
+  text-decoration: none;
 }
 
 .resource-card a:hover {
   text-decoration: underline;
+}
+
+/* ==========================
+   ICON ANIMATION
+========================== */
+.card h2::before {
+  content: "🚀";
+  display: inline-block;
+  margin-right: 8px;
+  animation: bounce 1.5s infinite;
+}
+
+/* ==========================
+   ANIMATIONS
+========================== */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 /* ==========================
@@ -120,6 +158,6 @@ button:focus {
 }
 
 .card::-webkit-scrollbar-thumb {
-  background: #6366f1;
+  background: #667eea;
   border-radius: 10px;
 }
