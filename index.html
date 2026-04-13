@@ -4,65 +4,7 @@
   <meta charset="UTF-8">
   <title>AI Career Advisor</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #2b4c7e, #3f72af);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .card {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      width: 400px;
-      text-align: center;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-    }
-
-    h2 {
-      margin-bottom: 20px;
-    }
-
-    #question {
-      font-size: 18px;
-      margin-bottom: 15px;
-    }
-
-    .option-btn {
-      display: block;
-      width: 100%;
-      margin: 8px 0;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      background: #e0e0e0;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-
-    .option-btn:hover {
-      background: #cfd8dc;
-    }
-
-    button {
-      margin-top: 15px;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      background: #3f72af;
-      color: white;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #2b4c7e;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -73,10 +15,9 @@
   <p id="question">Click Start to Begin</p>
   <div id="options"></div>
 
-<button onclick="startApp()">Start</button>
+  <button onclick="startApp()">Start</button>
 </div>
 
-<!-- ✅ IMPORTANT: Only link script.js -->
 <script src="script.js"></script>
 
 </body>

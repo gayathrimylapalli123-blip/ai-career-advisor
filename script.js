@@ -181,17 +181,15 @@ function showQuestion(data) {
 
   let optionsHTML = "";
 
-  options.forEach(option => {
-    const safeOption = option.replace(/'/g, "\\'");
+options.forEach(option => {
+  const safeOption = option.replace(/'/g, "\\'");
 
-    optionsHTML += `
-      <button onclick="handleAnswer('${safeOption}')"
-        style="width:100%;padding:12px;margin:8px 0;border:none;border-radius:8px;background:#e0e0e0;cursor:pointer;">
-        ${option}
-      </button>
-    `;
-  });
-
+  optionsHTML += `
+    <button class="option-btn" onclick="handleAnswer('${safeOption}')">
+      ${option}
+    </button>
+  `;
+});
   container.innerHTML = `
     <h2>🚀 AI Career Advisor</h2>
     <p>${data.question || "Loading..."}</p>
