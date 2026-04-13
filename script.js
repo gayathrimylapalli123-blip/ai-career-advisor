@@ -130,17 +130,28 @@ function showQuestion(data) {
       `;
     }
 
-    container.innerHTML = `
-      <h2>🎯 Career Suggestions</h2>
-      <p style="line-height:1.6;">${career}</p>
-      ${resourcesHTML}
+   container.innerHTML = `
+  <h2 style="margin-bottom:10px;">🎯 Career Suggestions</h2>
 
-      <button onclick="startApp()" 
-        style="margin-top:20px;padding:10px 20px;border:none;border-radius:8px;background:#4CAF50;color:white;cursor:pointer;">
-        Restart
-      </button>
-    `;
+  <div style="
+    text-align:left;
+    max-height:300px;
+    overflow-y:auto;
+    padding:10px;
+    margin-bottom:20px;
+  ">
+    <p style="line-height:1.7;font-size:15px;">
+      ${career}
+    </p>
+  </div>
 
+  ${resourcesHTML}
+
+  <button onclick="startApp()" 
+    style="margin-top:20px;padding:10px 20px;border:none;border-radius:8px;background:#4CAF50;color:white;cursor:pointer;">
+    Restart
+  </button>
+`;
     return;
   }
 
