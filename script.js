@@ -70,7 +70,7 @@ function showQuestion(data) {
   // ==========================
   if (data.type === "result") {
 
-    let career = data.career || data.message || "Career recommendation not available";
+    let career = data.career || data.message || "⚠️ No career recommendation received from AI";
     let resources = data.resources || [];
 
     // ✅ SAFE PARSE (if backend sends string)
