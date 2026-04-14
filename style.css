@@ -12,15 +12,15 @@ body {
 }
 
 /* ==========================
-   CARD (GLASSMORPHISM)
+   CARD (MAIN CONTAINER)
 ========================== */
 .card {
   width: 420px;
   max-height: 85vh;
   overflow-y: auto;
 
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(18px);
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
 
   border-radius: 20px;
   padding: 25px;
@@ -28,48 +28,29 @@ body {
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
 
   text-align: center;
-  color: #fff;
-
-  animation: fadeIn 0.6s ease;
+  color: #ffffff;
 }
 
 /* ==========================
    HEADER
 ========================== */
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.logo {
-  font-size: 30px;
-  margin-bottom: 5px;
-  animation: float 2s infinite ease-in-out;
-}
-
 h2 {
-  margin: 0;
+  margin: 0 0 10px;
   font-weight: 700;
 }
 
 /* ==========================
-   QUESTION
+   QUESTION TEXT
 ========================== */
-#question {
-  margin: 20px 0;
-  font-size: 16px;
+p {
+  font-size: 15px;
   color: #e0e7ff;
+  line-height: 1.6;
 }
 
 /* ==========================
-   OPTIONS
+   OPTION BUTTONS
 ========================== */
-.options-container {
-  margin-top: 10px;
-}
-
-/* PREMIUM BUTTON STYLE */
 .option-btn {
   width: 100%;
   padding: 12px;
@@ -79,32 +60,21 @@ h2 {
   border-radius: 12px;
 
   background: rgba(255, 255, 255, 0.2);
-  color: white;
-
-  backdrop-filter: blur(10px);
+  color: #fff;
 
   cursor: pointer;
   transition: all 0.3s ease;
-
-  font-weight: 500;
 }
 
-/* HOVER EFFECT */
 .option-btn:hover {
-  transform: translateY(-2px) scale(1.02);
+  transform: translateY(-2px);
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
-  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
-}
-
-/* CLICK EFFECT */
-.option-btn:active {
-  transform: scale(0.97);
 }
 
 /* ==========================
-   PRIMARY BUTTON
+   PRIMARY BUTTON (START/RESTART)
 ========================== */
-.primary-btn {
+button {
   margin-top: 15px;
   padding: 12px;
 
@@ -115,18 +85,15 @@ h2 {
   color: white;
 
   cursor: pointer;
-  font-weight: bold;
-
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
-.primary-btn:hover {
+button:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.5);
 }
 
 /* ==========================
-   RESULT SECTION
+   RESULT TEXT
 ========================== */
 .result-box {
   text-align: left;
@@ -134,77 +101,56 @@ h2 {
   color: #fff;
 }
 
+/* ==========================
+   🔥 RESOURCE CARD (FIXED DARK UI)
+========================== */
 .resource-card {
-  background: #1e293b; /* DARK solid color (fix visibility) */
+  background: #1e293b !important;  /* FORCE DARK */
+  color: #ffffff !important;
+
   border-radius: 14px;
   padding: 16px;
   margin-top: 14px;
 
-  color: #ffffff;
+  border-left: 4px solid #6366f1;
 
   box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.1);
 
   transition: all 0.3s ease;
 }
 
-/* Hover effect */
 .resource-card:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+  transform: translateY(-4px);
 }
+
+/* TEXT INSIDE CARD */
 .resource-card strong {
-  color: #ffffff;
+  display: block;
   font-size: 16px;
   font-weight: 600;
+  color: #ffffff !important;
 }
-.resource-card {
-  border-left: 4px solid #6366f1;
-}
+
 .resource-card small {
-  color: #94a3b8;
+  color: #94a3b8 !important;
 }
 
 .resource-card p {
-  color: #e2e8f0;
-  margin-top: 6px;
+  color: #e2e8f0 !important;
 }
 
+/* LINK */
 .resource-card a {
   display: inline-block;
   margin-top: 8px;
 
-  color: #38bdf8;
+  color: #38bdf8 !important;
   font-weight: 600;
   text-decoration: none;
 }
 
 .resource-card a:hover {
-  color: #7dd3fc;
-}
-
-.resource-card:hover {
-  transform: translateY(-3px);
-}
-
-.resource-card strong {
-  display: block;
-  margin-bottom: 4px;
-}
-
-.resource-card small {
-  color: #c7d2fe;
-}
-
-.resource-card a {
-  display: inline-block;
-  margin-top: 6px;
-  color: #22d3ee;
-  text-decoration: none;
-}
-
-.resource-card a:hover {
-  text-decoration: underline;
+  color: #7dd3fc !important;
 }
 
 /* ==========================
@@ -217,24 +163,4 @@ h2 {
 .card::-webkit-scrollbar-thumb {
   background: #6366f1;
   border-radius: 10px;
-}
-
-/* ==========================
-   ANIMATIONS
-========================== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes float {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-  100% { transform: translateY(0); }
 }
