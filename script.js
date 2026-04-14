@@ -185,7 +185,7 @@ options.forEach(option => {
   const safeOption = option.replace(/'/g, "\\'");
 
   optionsHTML += `
-    <button class="option-btn" onclick="handleAnswer('${safeOption}')">
+   <button class="option-btn" onclick="handleAnswer('${safeOption}')">
       ${option}
     </button>
   `;
