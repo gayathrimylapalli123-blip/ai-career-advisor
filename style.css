@@ -5,29 +5,31 @@ body {
   margin: 0;
   font-family: 'Inter', sans-serif;
   background: linear-gradient(135deg, #4f46e5, #3b82f6, #06b6d4);
-  height: 100vh;
+  min-height: 100vh;
+
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 /* ==========================
-   CARD (MAIN CONTAINER)
+   MAIN CONTAINER (FULL WIDTH)
 ========================== */
 .card {
-  width: 420px;
-  max-height: 85vh;
+  width: 90%;
+  max-width: 1000px;
+  height: 85vh;
+
   overflow-y: auto;
 
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
 
   border-radius: 20px;
-  padding: 25px;
+  padding: 30px;
 
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
 
-  text-align: center;
   color: #ffffff;
 }
 
@@ -35,17 +37,18 @@ body {
    HEADER
 ========================== */
 h2 {
-  margin: 0 0 10px;
+  text-align: center;
+  margin-bottom: 10px;
   font-weight: 700;
 }
 
 /* ==========================
-   QUESTION TEXT
+   TEXT
 ========================== */
 p {
-  font-size: 15px;
+  font-size: 16px;
+  line-height: 1.7;
   color: #e0e7ff;
-  line-height: 1.6;
 }
 
 /* ==========================
@@ -72,10 +75,10 @@ p {
 }
 
 /* ==========================
-   PRIMARY BUTTON (START/RESTART)
+   PRIMARY BUTTON
 ========================== */
 button {
-  margin-top: 15px;
+  margin-top: 20px;
   padding: 12px;
 
   border: none;
@@ -86,6 +89,10 @@ button {
 
   cursor: pointer;
   transition: 0.3s;
+
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 button:hover {
@@ -93,24 +100,39 @@ button:hover {
 }
 
 /* ==========================
-   RESULT TEXT
+   RESULT LAYOUT
 ========================== */
-.result-box {
-  text-align: left;
-  margin-top: 15px;
-  color: #fff;
+.result-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* CAREER TEXT */
+.career-text {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #e0e7ff;
 }
 
 /* ==========================
-   🔥 RESOURCE CARD (FIXED DARK UI)
+   RESOURCES GRID (HORIZONTAL)
+========================== */
+.resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* ==========================
+   🔥 RESOURCE CARDS (FIXED)
 ========================== */
 .resource-card {
-  background: #1e293b !important;  /* FORCE DARK */
+  background: #0f172a !important; /* FORCE DARK */
   color: #ffffff !important;
 
   border-radius: 14px;
   padding: 16px;
-  margin-top: 14px;
 
   border-left: 4px solid #6366f1;
 
@@ -120,7 +142,7 @@ button:hover {
 }
 
 .resource-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
 }
 
 /* TEXT INSIDE CARD */
@@ -136,10 +158,11 @@ button:hover {
 }
 
 .resource-card p {
-  color: #e2e8f0 !important;
+  color: #cbd5f5 !important;
+  margin-top: 6px;
 }
 
-/* LINK */
+/* LINKS */
 .resource-card a {
   display: inline-block;
   margin-top: 8px;
