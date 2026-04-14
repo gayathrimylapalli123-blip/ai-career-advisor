@@ -135,17 +135,15 @@ h2 {
 }
 
 .resource-card {
-  background: rgba(0, 0, 0, 0.35); /* darker glass */
+  background: #1e293b; /* DARK solid color (fix visibility) */
   border-radius: 14px;
-  padding: 14px;
-  margin-top: 12px;
+  padding: 16px;
+  margin-top: 14px;
 
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
 
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
-  color: #fff;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1);
 
   transition: all 0.3s ease;
 }
@@ -157,24 +155,32 @@ h2 {
 }
 .resource-card strong {
   color: #ffffff;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 600;
 }
-
+.resource-card {
+  border-left: 4px solid #6366f1;
+}
 .resource-card small {
-  color: #cbd5f5;
+  color: #94a3b8;
 }
 
 .resource-card p {
-  color: #e0e7ff;
+  color: #e2e8f0;
+  margin-top: 6px;
 }
 
 .resource-card a {
-  color: #22d3ee;
+  display: inline-block;
+  margin-top: 8px;
+
+  color: #38bdf8;
   font-weight: 600;
+  text-decoration: none;
 }
 
 .resource-card a:hover {
-  color: #67e8f9;
+  color: #7dd3fc;
 }
 
 .resource-card:hover {
