@@ -70,10 +70,9 @@ function showQuestion(data) {
 // ==========================
 if (data.type === "result") {
 
-  let career = data.career || data.message || "⚠️ No career recommendation received";
+  let career = data.career || data.message || "No career recommendation available";
   let resources = data.resources || [];
 
-  // SAFE PARSE
   if (typeof resources === "string") {
     try { resources = JSON.parse(resources); } catch { resources = []; }
   }
@@ -82,16 +81,6 @@ if (data.type === "result") {
     resources = [resources];
   }
 
-  // FALLBACK (OpenAI format)
-  if (data.output) {
-    try {
-      const parsed = JSON.parse(data.output[0].content[0].text);
-      career = parsed.career || parsed.message || career;
-      if (parsed.resources) resources = parsed.resources;
-    } catch {}
-  }
-
-  // RESOURCE UI (FIXED - NO INLINE STYLE)
   let resourcesHTML = "";
 
   if (resources.length > 0) {
@@ -99,10 +88,10 @@ if (data.type === "result") {
       <h3 class="section-title">📚 Learning Resources</h3>
       ${resources.map(r => `
         <div class="resource-card">
-          <strong>${r.title || "Course"}</strong>
-          <small>${r.platform || ""}</small>
+          <strong>${r.title}</strong>
+          <small>${r.platform}</small>
           <p>${r.description || ""}</p>
-          <a href="${r.link || "#"}" target="_blank">Start Learning →</a>
+          <a href="${r.link}" target="_blank">Start Learning →</a>
         </div>
       `).join("")}
     `;
