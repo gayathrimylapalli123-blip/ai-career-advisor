@@ -135,14 +135,46 @@ h2 {
 }
 
 .resource-card {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 12px;
-  padding: 12px;
+  background: rgba(0, 0, 0, 0.35); /* darker glass */
+  border-radius: 14px;
+  padding: 14px;
   margin-top: 12px;
 
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 
-  transition: 0.3s;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  color: #fff;
+
+  transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.resource-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+.resource-card strong {
+  color: #ffffff;
+  font-size: 15px;
+}
+
+.resource-card small {
+  color: #cbd5f5;
+}
+
+.resource-card p {
+  color: #e0e7ff;
+}
+
+.resource-card a {
+  color: #22d3ee;
+  font-weight: 600;
+}
+
+.resource-card a:hover {
+  color: #67e8f9;
 }
 
 .resource-card:hover {
