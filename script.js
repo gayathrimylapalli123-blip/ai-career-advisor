@@ -65,96 +65,63 @@ function showQuestion(data) {
     return;
   }
 
-  // ==========================
-  // RESULT SCREEN
-  // ==========================
-  if (data.type === "result") {
+ // ==========================
+// RESULT SCREEN
+// ==========================
+if (data.type === "result") {
 
-    let career = data.career || data.message || "⚠️ No career recommendation received from AI";
-    let resources = data.resources || [];
+  let career = data.career || data.message || "⚠️ No career recommendation received";
+  let resources = data.resources || [];
 
-    // ✅ SAFE PARSE (if backend sends string)
-    if (typeof resources === "string") {
-      try {
-        resources = JSON.parse(resources);
-      } catch {
-        resources = [];
-      }
-    }
-
-    // ✅ ENSURE ARRAY
-    if (!Array.isArray(resources)) {
-      resources = [resources];
-    }
-
-    // ✅ FALLBACK PARSE (OpenAI format)
-    if (data.output) {
-      try {
-        const parsed = JSON.parse(data.output[0].content[0].text);
-
-        career = parsed.career || parsed.message || career;
-
-        if (parsed.resources) {
-          resources = parsed.resources;
-
-          if (typeof resources === "string") {
-            resources = JSON.parse(resources);
-          }
-
-          if (!Array.isArray(resources)) {
-            resources = [resources];
-          }
-        }
-
-      } catch (e) {
-        console.error("Parsing error:", e);
-      }
-    }
-
-    // ✅ BUILD RESOURCES UI SAFELY
-    let resourcesHTML = "";
-
-    if (Array.isArray(resources) && resources.length > 0) {
-      resourcesHTML = `
-        <h3 style="margin-top:20px;">📚 Learning Resources</h3>
-        ${resources.map(r => `
-          <div style="margin:10px 0;padding:12px;background:#f3f4f6;border-radius:10px;text-align:left;">
-            <strong>${r.title || "Course"}</strong><br>
-            <small>${r.platform || ""}</small>
-            <p>${r.description || ""}</p>
-            <a href="${r.link || "#"}" target="_blank" style="color:#2563eb;">
-              Start Learning →
-            </a>
-          </div>
-        `).join("")}
-      `;
-    }
-
-   container.innerHTML = `
-  <h2 style="margin-bottom:10px;">🎯 Career Suggestions</h2>
-
-  <div style="
-    text-align:left;
-    max-height:300px;
-    overflow-y:auto;
-    padding:10px;
-    margin-bottom:20px;
-  ">
-    <p style="line-height:1.7;font-size:15px;">
-      ${career}
-    </p>
-  </div>
-
-  ${resourcesHTML}
-
-  <button onclick="startApp()" 
-    style="margin-top:20px;padding:10px 20px;border:none;border-radius:8px;background:#4CAF50;color:white;cursor:pointer;">
-    Restart
-  </button>
-`;
-    return;
+  // SAFE PARSE
+  if (typeof resources === "string") {
+    try { resources = JSON.parse(resources); } catch { resources = []; }
   }
 
+  if (!Array.isArray(resources)) {
+    resources = [resources];
+  }
+
+  // FALLBACK (OpenAI format)
+  if (data.output) {
+    try {
+      const parsed = JSON.parse(data.output[0].content[0].text);
+      career = parsed.career || parsed.message || career;
+      if (parsed.resources) resources = parsed.resources;
+    } catch {}
+  }
+
+  // RESOURCE UI (FIXED - NO INLINE STYLE)
+  let resourcesHTML = "";
+
+  if (resources.length > 0) {
+    resourcesHTML = `
+      <h3 class="section-title">📚 Learning Resources</h3>
+      ${resources.map(r => `
+        <div class="resource-card">
+          <strong>${r.title || "Course"}</strong>
+          <small>${r.platform || ""}</small>
+          <p>${r.description || ""}</p>
+          <a href="${r.link || "#"}" target="_blank">Start Learning →</a>
+        </div>
+      `).join("")}
+    `;
+  }
+
+  container.innerHTML = `
+    <h2>🎯 Career Suggestions</h2>
+
+    <div class="result-box">
+      <p>${career}</p>
+    </div>
+
+    ${resourcesHTML}
+
+    <button onclick="startApp()">Restart</button>
+  `;
+
+  return;
+}
   // ==========================
   // QUESTION SCREEN
   // ==========================
