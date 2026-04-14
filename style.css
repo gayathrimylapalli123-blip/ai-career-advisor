@@ -4,55 +4,64 @@
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #4f46e5, #3b82f6, #06b6d4);
-  min-height: 100vh;
+
+  background: linear-gradient(135deg, #0f172a, #1e293b, #020617);
 
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
 }
 
 /* ==========================
-   MAIN CONTAINER (FULL WIDTH)
+   MAIN CARD (CENTER FIXED)
 ========================== */
 .card {
-  width: 90%;
-  max-width: 1000px;
-  height: 85vh;
-
+  width: 500px;
+  max-height: 85vh;
   overflow-y: auto;
 
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
+  background: #111827;
+  border-radius: 18px;
+  padding: 25px;
 
-  border-radius: 20px;
-  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6);
 
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
-
-  color: #ffffff;
+  color: #e5e7eb;
 }
 
 /* ==========================
-   HEADER
+   HEADER (ANIMATED)
 ========================== */
 h2 {
+  font-size: 26px;
+  font-weight: 700;
   text-align: center;
   margin-bottom: 10px;
-  font-weight: 700;
+
+  background: linear-gradient(90deg, #38bdf8, #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ==========================
    TEXT
 ========================== */
 p {
-  font-size: 16px;
-  line-height: 1.7;
-  color: #e0e7ff;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #cbd5f5;
 }
 
 /* ==========================
-   OPTION BUTTONS
+   OPTIONS BUTTONS
 ========================== */
 .option-btn {
   width: 100%;
@@ -60,29 +69,29 @@ p {
   margin: 8px 0;
 
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
 
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background: #1f2937;
+  color: #e5e7eb;
 
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: 0.25s;
 }
 
 .option-btn:hover {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  background: #6366f1;
+  color: white;
 }
 
 /* ==========================
-   PRIMARY BUTTON
+   MAIN BUTTON (START / RESTART)
 ========================== */
 button {
-  margin-top: 20px;
-  padding: 12px;
+  margin-top: 15px;
+  padding: 10px 14px;
 
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
 
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: white;
@@ -100,57 +109,43 @@ button:hover {
 }
 
 /* ==========================
-   RESULT LAYOUT
+   RESULT TEXT
 ========================== */
-.result-layout {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.result-box {
+  margin-top: 15px;
 }
 
-/* CAREER TEXT */
-.career-text {
-  font-size: 16px;
-  line-height: 1.7;
-  color: #e0e7ff;
+.result-box p {
+  font-size: 14px;
+  color: #dbeafe;
 }
 
 /* ==========================
-   RESOURCES GRID (HORIZONTAL)
-========================== */
-.resources-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-}
-
-/* ==========================
-   🔥 RESOURCE CARDS (FIXED)
+   RESOURCE CARDS (FIXED DARK)
 ========================== */
 .resource-card {
-  background: #0f172a !important; /* FORCE DARK */
-  color: #ffffff !important;
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
 
-  border-radius: 14px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 14px;
+  margin-top: 12px;
 
   border-left: 4px solid #6366f1;
 
-  box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
 
-  transition: all 0.3s ease;
+  transition: 0.3s;
 }
 
 .resource-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
 }
 
 /* TEXT INSIDE CARD */
 .resource-card strong {
-  display: block;
-  font-size: 16px;
-  font-weight: 600;
-  color: #ffffff !important;
+  color: #f8fafc !important;
+  font-size: 15px;
 }
 
 .resource-card small {
@@ -159,31 +154,36 @@ button:hover {
 
 .resource-card p {
   color: #cbd5f5 !important;
-  margin-top: 6px;
 }
 
 /* LINKS */
 .resource-card a {
-  display: inline-block;
-  margin-top: 8px;
-
   color: #38bdf8 !important;
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: none;
 }
 
 .resource-card a:hover {
-  color: #7dd3fc !important;
+  text-decoration: underline;
 }
 
 /* ==========================
    SCROLLBAR
 ========================== */
 .card::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 
 .card::-webkit-scrollbar-thumb {
   background: #6366f1;
   border-radius: 10px;
+}
+.icon {
+  display: inline-block;
+  animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
 }
