@@ -137,3 +137,4 @@ function handleAnswer(option) {
 
   fetchNextQuestion(option);
 }
+startApp();
