@@ -39,19 +39,19 @@ async function fetchNextQuestion(answer) {
   showLoader();
 
   try {
-    const response = await fetch("https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        answer: answer,
-        stage: currentStage,
-        history: [...new Set(answers)],
-        count: answers.length,
-        forceResult: answer === "__FORCE_RESULT__"
-      })
-    });
+    const response = await fetch("/api/webhook", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    answer: answer,
+    stage: currentStage,
+    history: [...new Set(answers)],
+    count: answers.length,
+    forceResult: answer === "__FORCE_RESULT__"
+  })
+});
 
     const data = await response.json();
 
