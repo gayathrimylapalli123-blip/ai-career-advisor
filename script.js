@@ -77,6 +77,23 @@ function showQuestion(data) {
   // ==========================
   // RESULT SCREEN
   // ==========================
+  if (answers.length >= 10) {
+  // force result from backend
+  fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      answer: "__FORCE_RESULT__",
+      history: answers,
+      count: answers.length,
+      forceResult: true
+    })
+  })
+  .then(res => res.json())
+  .then(data => showQuestion(data));
+
+  return;
+}
   if (data.type === "result") {
 
     let career = data.career || data.message || "No career recommendation available";
