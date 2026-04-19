@@ -37,7 +37,7 @@ showLoader();
 console.log("STAGE:", answers.length);
 
 try {
-const response = await fetch("http://localhost:5678/webhook/career-advisor", {
+const response = await fetch("https://pension-wildly-catsup.ngrok-free.dev/webhook/career-advisor", {
 method: "POST",
 headers: {
 "Content-Type": "application/json"
