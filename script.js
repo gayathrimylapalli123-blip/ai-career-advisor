@@ -51,7 +51,18 @@ async function fetchNextQuestion(answer) {
       })
     });
 
-    const data = await response.json();
+   const text = await response.text();
+console.log("RAW RESPONSE:", text);
+
+let data;
+try {
+  data = JSON.parse(text);
+} catch (e) {
+  console.error("JSON ERROR:", e);
+  alert("Invalid response from backend");
+  isLoading = false;
+  return;
+}
 
     setTimeout(() => {
       showQuestion(data);
