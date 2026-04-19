@@ -39,7 +39,7 @@ async function fetchNextQuestion(answer) {
   showLoader();
 
   try {
-    const response = await fetch("/api/webhook", {
+    const response = await fetch("http://localhost:5678/webhook/career-advisor", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
