@@ -31,7 +31,7 @@ isLoading = true;
 
 showLoader();
 
-console.log("STAGE:", answers.length); // DEBUG
+console.log("STAGE:", answers.length);
 
 try {
 const response = await fetch("http://localhost:5678/webhook/career-advisor", {
@@ -104,16 +104,12 @@ if (resources.length > 0) {
 
 container.innerHTML = `
   <h2 class="fade-in">🎯 Career Recommendation</h2>
-
   <div class="result-box fade-in">
     <p>${career}</p>
   </div>
-
   ${resourcesHTML}
-
   <button class="fade-in" onclick="startApp()">Restart</button>
 `;
-
 return;
 ```
 
@@ -143,7 +139,7 @@ let optionsHTML = "";
 
 options.forEach((option, i) => {
 const safeOption = option.replace(/'/g, "\'");
-optionsHTML += `       <button class="option-btn fade-in" 
+optionsHTML += `       <button class="option-btn fade-in"
               style="animation-delay:${i * 0.1}s"
               onclick="handleAnswer('${safeOption}')">
         ${option}       </button>
