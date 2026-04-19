@@ -83,11 +83,11 @@ function showQuestion(data) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      answer: "__FORCE_RESULT__",
-      history: answers,
-      count: answers.length,
-      forceResult: true
-    })
+  answer: answer,
+  stage: answers.length,
+  history: answers,
+  forceResult: answers.length >= 10
+})
   })
   .then(res => res.json())
   .then(data => showQuestion(data));
