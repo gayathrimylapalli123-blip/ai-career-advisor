@@ -11,9 +11,21 @@ export default async function handler(req, res) {
       }
     );
 
-    const data = await response.text(); // ⚠️ use text (important)
+    const text = await response.text();
 
-    res.status(200).send(data);
+    // 👇 TRY to parse JSON safely
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      console.error("NOT JSON RESPONSE:", text);
+      return res.status(500).json({
+        error: "Invalid JSON from n8n",
+        raw: text
+      });
+    }
+
+    res.status(200).json(data);
 
   } catch (error) {
     console.error("SERVER ERROR:", error);
