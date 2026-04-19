@@ -1,7 +1,6 @@
 // ==========================
 // GLOBAL STATE
 // ==========================
-let currentStage = "education";
 let answers = [];
 let isLoading = false;
 
@@ -9,23 +8,17 @@ let isLoading = false;
 // START APP
 // ==========================
 function startApp() {
-  currentStage = "education";
-  answers = [];
-
-  showLoader();
-  fetchNextQuestion(null);
+answers = [];
+showLoader();
+fetchNextQuestion(null);
 }
 
 // ==========================
 // LOADER UI
 // ==========================
 function showLoader() {
-  const container = document.querySelector(".card");
-  container.innerHTML = `
-    <div class="loader-box">
-      <div class="spinner"></div>
-      <p>Thinking... 🤖</p>
-    </div>
+const container = document.querySelector(".card");
+container.innerHTML = `     <div class="loader-box">       <div class="spinner"></div>       <p>Thinking... 🤖</p>     </div>
   `;
 }
 
@@ -33,148 +26,131 @@ function showLoader() {
 // FETCH QUESTION FROM n8n
 // ==========================
 async function fetchNextQuestion(answer) {
-  if (isLoading) return;
-  isLoading = true;
+if (isLoading) return;
+isLoading = true;
 
-  showLoader();
+showLoader();
 
-  try {
-    const response = await fetch("http://localhost:5678/webhook/career-advisor", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    answer: answer,
-    stage: currentStage,
-   history: answers,
-    count: answers.length,
-    forceResult: answer === "__FORCE_RESULT__"
-  })
+console.log("STAGE:", answers.length); // DEBUG
+
+try {
+const response = await fetch("http://localhost:5678/webhook/career-advisor", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+answer: answer,
+stage: answers.length,
+history: answers,
+forceResult: answers.length >= 10
+})
 });
 
-    const data = await response.json();
+```
+const data = await response.json();
 
-    setTimeout(() => {
-      showQuestion(data);
-      isLoading = false;
-    }, 400); // smooth transition
+setTimeout(() => {
+  showQuestion(data);
+  isLoading = false;
+}, 300);
+```
 
-  } catch (error) {
-    console.error("FETCH ERROR:", error);
-    alert("Error connecting to AI");
-    isLoading = false;
-  }
+} catch (error) {
+console.error("FETCH ERROR:", error);
+alert("Error connecting to backend");
+isLoading = false;
+}
 }
 
 // ==========================
 // DISPLAY QUESTION / RESULT
 // ==========================
 function showQuestion(data) {
+const container = document.querySelector(".card");
 
-  let container = document.querySelector(".card");
+// ==========================
+// RESULT SCREEN
+// ==========================
+if (data.type === "result") {
 
-  // ==========================
-  // RESULT SCREEN
-  // ==========================
-  if (answers.length >= 10) {
-  // force result from backend
-  fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-  answer: answer,
-  stage: answers.length,
-  history: answers,
-  forceResult: answers.length >= 10
-})
-  })
-  .then(res => res.json())
-  .then(data => showQuestion(data));
+```
+let career = data.message || "No career recommendation available";
+let resources = data.resources || [];
 
-  return;
+if (typeof resources === "string") {
+  try { resources = JSON.parse(resources); } catch { resources = []; }
 }
-  if (data.type === "result") {
 
-    let career = data.career || data.message || "No career recommendation available";
-    let resources = data.resources || [];
+if (!Array.isArray(resources)) {
+  resources = [resources];
+}
 
-    if (typeof resources === "string") {
-      try { resources = JSON.parse(resources); } catch { resources = []; }
-    }
+let resourcesHTML = "";
 
-    if (!Array.isArray(resources)) {
-      resources = [resources];
-    }
-
-    let resourcesHTML = "";
-
-    if (resources.length > 0) {
-      resourcesHTML = `
-        <h3 class="section-title fade-in">📚 Learning Resources</h3>
-        ${resources.map((r, i) => `
-          <div class="resource-card fade-in" style="animation-delay:${i * 0.1}s">
-            <strong>${r.title}</strong>
-            <small>${r.platform}</small>
-            <p>${r.description || ""}</p>
-            <a href="${r.link}" target="_blank">Start Learning →</a>
-          </div>
-        `).join("")}
-      `;
-    }
-
-    container.innerHTML = `
-      <h2 class="fade-in">🎯 Career Suggestions</h2>
-
-      <div class="result-box fade-in">
-        <p>${career}</p>
+if (resources.length > 0) {
+  resourcesHTML = `
+    <h3 class="section-title fade-in">📚 Learning Resources</h3>
+    ${resources.map((r, i) => `
+      <div class="resource-card fade-in" style="animation-delay:${i * 0.1}s">
+        <strong>${r.title}</strong>
+        <small>${r.platform}</small>
+        <p>${r.description || ""}</p>
+        <a href="${r.link}" target="_blank">Start Learning →</a>
       </div>
+    `).join("")}
+  `;
+}
 
-      ${resourcesHTML}
+container.innerHTML = `
+  <h2 class="fade-in">🎯 Career Recommendation</h2>
 
-      <button class="fade-in" onclick="startApp()">Restart</button>
-    `;
+  <div class="result-box fade-in">
+    <p>${career}</p>
+  </div>
 
-    return;
-  }
+  ${resourcesHTML}
 
-  // ==========================
-  // QUESTION SCREEN
-  // ==========================
-  let options = [];
+  <button class="fade-in" onclick="startApp()">Restart</button>
+`;
 
-  try {
-    if (Array.isArray(data.options)) {
-      options = data.options;
-    } else if (typeof data.options === "string") {
-      options = JSON.parse(data.options);
-    }
-  } catch (e) {
-    console.error("Options parsing failed:", e);
-  }
+return;
+```
 
-  if (!options || options.length === 0) {
-    fetchNextQuestion("__FORCE_RESULT__");
-    return;
-  }
+}
 
-  let optionsHTML = "";
+// ==========================
+// QUESTION SCREEN
+// ==========================
+let options = [];
 
-  options.forEach((option, i) => {
-    const safeOption = option.replace(/'/g, "\\'");
-    optionsHTML += `
-      <button class="option-btn fade-in" 
+try {
+if (Array.isArray(data.options)) {
+options = data.options;
+} else if (typeof data.options === "string") {
+options = JSON.parse(data.options);
+}
+} catch (e) {
+console.error("Options parsing failed:", e);
+}
+
+if (!options || options.length === 0) {
+fetchNextQuestion("**FORCE_RESULT**");
+return;
+}
+
+let optionsHTML = "";
+
+options.forEach((option, i) => {
+const safeOption = option.replace(/'/g, "\'");
+optionsHTML += `       <button class="option-btn fade-in" 
               style="animation-delay:${i * 0.1}s"
               onclick="handleAnswer('${safeOption}')">
-        ${option}
-      </button>
+        ${option}       </button>
     `;
-  });
+});
 
-  container.innerHTML = `
-    <h2 class="fade-in">🚀 AI Career Advisor</h2>
-    <p class="fade-in">${data.question || "Loading..."}</p>
-    <div>${optionsHTML}</div>
+container.innerHTML = `     <h2 class="fade-in">🚀 AI Career Advisor</h2>     <p class="fade-in">${data.question || "Loading..."}</p>     <div>${optionsHTML}</div>
   `;
 }
 
@@ -182,16 +158,14 @@ function showQuestion(data) {
 // HANDLE USER ANSWER
 // ==========================
 function handleAnswer(selectedOption) {
-  if (isLoading) return;
+if (isLoading) return;
 
-  if (answers[answers.length - 1] !== selectedOption) {
-    answers.push(selectedOption);
-  }
+answers.push(selectedOption);
 
-  if (answers.length >= 10) {
-    fetchNextQuestion("__FORCE_RESULT__");
-    return;
-  }
+if (answers.length >= 10) {
+fetchNextQuestion("**FORCE_RESULT**");
+return;
+}
 
-  fetchNextQuestion(selectedOption);
+fetchNextQuestion(selectedOption);
 }
