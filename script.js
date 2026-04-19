@@ -47,7 +47,7 @@ async function fetchNextQuestion(answer) {
   body: JSON.stringify({
     answer: answer,
     stage: currentStage,
-    history: [...new Set(answers)],
+   history: answers,
     count: answers.length,
     forceResult: answer === "__FORCE_RESULT__"
   })
