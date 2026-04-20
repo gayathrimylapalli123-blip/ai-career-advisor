@@ -38,18 +38,18 @@ async function fetchNextQuestion(answer) {
   console.log("STAGE:", answers.length);
 
   try {
-    const response = await fetch("https://pension-wildly-catsup.ngrok-free.dev/webhook/career-advisor", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        answer: answer,
-        stage: answers.length,
-        history: answers,
-        forceResult: answers.length >= 10
-      })
-    });
+   const response = await fetch("/api/webhook", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    answer: answer,
+    stage: answers.length,
+    history: answers,
+    forceResult: answers.length >= 10
+  })
+});
 
    const text = await response.text();
 console.log("RAW RESPONSE:", text);
