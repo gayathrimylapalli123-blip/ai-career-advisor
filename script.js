@@ -9,7 +9,6 @@ let isLoading = false;
 // ==========================
 function startApp() {
   answers = [];
-  showLoader();
   fetchNextQuestion(null);
 }
 
@@ -38,27 +37,22 @@ async function fetchNextQuestion(answer) {
   console.log("STAGE:", answers.length);
 
   try {
-  const response = await fetch("/api/webhook", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    answer: answer,
-    stage: answers.length,
-    history: answers,
-    forceResult: answers.length >= 10
-  })
-});
+    const response = await fetch("/api/webhook", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        answer: answer,
+        stage: answers.length,
+        history: answers,
+        forceResult: answers.length >= 10
+      })
+    });
 
-const data = await response.json();
+    const data = await response.json();
 
-console.log("RAW RESPONSE:", data);
-
-setTimeout(() => {
-  showQuestion(data);
-  isLoading = false;
-}, 300);
+    console.log("RAW RESPONSE:", data);
 
     setTimeout(() => {
       showQuestion(data);
@@ -98,35 +92,40 @@ function showQuestion(data) {
       });
     }
 
-    html += `<button onclick="startApp()">Restart</button>`;
+    html += `<button id="restartBtn">Restart</button>`;
     container.innerHTML = html;
+
+    document.getElementById("restartBtn").addEventListener("click", startApp);
     return;
   }
 
   // ==========================
   // QUESTION SCREEN
   // ==========================
-  let options = [];
-
-  if (Array.isArray(data.options)) {
-    options = data.options;
-  }
-
   let buttons = "";
 
-  options.forEach((opt) => {
-   buttons += `
-  <button onclick='handleAnswer(${JSON.stringify(opt)})'>
-    ${opt}
-  </button><br>
-`;
-  });
+  if (Array.isArray(data.options)) {
+    data.options.forEach(opt => {
+      buttons += `
+        <button class="option-btn" data-value="${opt}">
+          ${opt}
+        </button><br>
+      `;
+    });
+  }
 
   container.innerHTML = `
     <h2>🚀 AI Career Advisor</h2>
     <p>${data.question || "Loading..."}</p>
     ${buttons}
   `;
+
+  // ✅ SAFE EVENT LISTENERS (NO onclick)
+  document.querySelectorAll(".option-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      handleAnswer(btn.dataset.value);
+    });
+  });
 }
 
 // ==========================
@@ -144,4 +143,8 @@ function handleAnswer(option) {
 
   fetchNextQuestion(option);
 }
+
+// ==========================
+// INIT
+// ==========================
 startApp();
