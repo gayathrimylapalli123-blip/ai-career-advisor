@@ -52,11 +52,14 @@ async function fetchNextQuestion(answer) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        answer: answer,
-        stage: answers.length,
-        history: answers,
-        forceResult: answers.length === 10
-      })
+  answer: answer,
+  stage: answers.length,
+  history: answers.map((ans, i) => ({
+    stage: i,
+    answer: ans
+  })),
+  forceResult: answers.length === 10
+})
     });
 
     const data = await response.json();
