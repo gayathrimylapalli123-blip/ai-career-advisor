@@ -38,7 +38,7 @@ async function fetchNextQuestion(answer) {
   console.log("STAGE:", answers.length);
 
   try {
-   const response = await fetch("/api/webhook", {
+  const response = await fetch("/api/webhook", {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
@@ -51,18 +51,14 @@ async function fetchNextQuestion(answer) {
   })
 });
 
-   const text = await response.text();
-console.log("RAW RESPONSE:", text);
+const data = await response.json();
 
-let data;
-try {
-  data = JSON.parse(text);
-} catch (e) {
-  console.error("JSON ERROR:", e);
-  alert("Invalid response from backend");
+console.log("RAW RESPONSE:", data);
+
+setTimeout(() => {
+  showQuestion(data);
   isLoading = false;
-  return;
-}
+}, 300);
 
     setTimeout(() => {
       showQuestion(data);
