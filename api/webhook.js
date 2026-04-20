@@ -1,7 +1,7 @@
 export default async function handler(req, res) {
   try {
-    const response = await fetch(
-      "https://gayathri-mylapalli00.app.n8n.cloud/webhook/0b1bc108-5556-4188-bcae-6d7cd78be793",
+   const response = await fetch(
+  "https://pension-wildly-catsup.ngrok-free.dev/webhook/career-advisor",
       {
         method: "POST",
         headers: {
