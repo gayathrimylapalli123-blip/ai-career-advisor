@@ -115,11 +115,11 @@ function showQuestion(data) {
   let buttons = "";
 
   options.forEach((opt) => {
-    buttons += `
-      <button onclick="handleAnswer(${JSON.stringify(opt)})">
-        ${opt}
-      </button><br>
-    `;
+   buttons += `
+  <button onclick='handleAnswer(${JSON.stringify(opt)})'>
+    ${opt}
+  </button><br>
+`;
   });
 
   container.innerHTML = `
