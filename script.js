@@ -3,12 +3,15 @@
 // ==========================
 let answers = [];
 let isLoading = false;
+let quizCompleted = false; // 🔒 prevents extra calls
 
 // ==========================
 // START APP
 // ==========================
 function startApp() {
   answers = [];
+  isLoading = false;
+  quizCompleted = false;
   fetchNextQuestion(null);
 }
 
@@ -29,6 +32,12 @@ function showLoader() {
 // FETCH QUESTION
 // ==========================
 async function fetchNextQuestion(answer) {
+  // 🚨 STOP if already completed
+  if (quizCompleted && answer !== "__FORCE_RESULT__") {
+    console.log("Blocked extra request");
+    return;
+  }
+
   if (isLoading) return;
   isLoading = true;
 
@@ -46,7 +55,7 @@ async function fetchNextQuestion(answer) {
         answer: answer,
         stage: answers.length,
         history: answers,
-        forceResult: answers.length >= 10
+        forceResult: answers.length === 10
       })
     });
 
@@ -76,6 +85,8 @@ function showQuestion(data) {
   // RESULT SCREEN
   // ==========================
   if (data.type === "result") {
+    quizCompleted = true; // 🔒 LOCK SYSTEM
+
     let html = `<h2>🎯 Career Recommendation</h2>`;
     html += `<p>${data.message || "No result available"}</p>`;
 
@@ -120,7 +131,7 @@ function showQuestion(data) {
     ${buttons}
   `;
 
-  // ✅ SAFE EVENT LISTENERS (NO onclick)
+  // ✅ SAFE EVENT LISTENERS
   document.querySelectorAll(".option-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       handleAnswer(btn.dataset.value);
@@ -132,11 +143,19 @@ function showQuestion(data) {
 // HANDLE ANSWER
 // ==========================
 function handleAnswer(option) {
-  if (isLoading) return;
+  if (isLoading || quizCompleted) return;
+
+  // 🚨 HARD STOP
+  if (answers.length >= 10) {
+    console.log("STOP: Max reached");
+    return;
+  }
 
   answers.push(option);
 
-  if (answers.length >= 10) {
+  // ✅ EXACTLY 10 → GET RESULT
+  if (answers.length === 10) {
+    quizCompleted = true;
     fetchNextQuestion("__FORCE_RESULT__");
     return;
   }
