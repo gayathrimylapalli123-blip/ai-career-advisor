@@ -46,7 +46,7 @@ async function fetchNextQuestion(answer) {
   console.log("STAGE:", answers.length);
 
   try {
-    const response = await fetch("/api/webhook", {
+    const response = await fetch("https://pension-wildly-catsup.ngrok-free.dev/webhook/career-advisor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -60,9 +60,14 @@ async function fetchNextQuestion(answer) {
   })),
   forceResult: answers.length === 10
 })
+
     });
 
     const data = await response.json();
+    if (data.type === "result") {
+  showResult(data);
+  return;
+}
 
     console.log("RAW RESPONSE:", data);
 
@@ -170,3 +175,22 @@ function handleAnswer(option) {
 // INIT
 // ==========================
 startApp();
+function showResult(data) {
+  const container = document.querySelector(".card");
+
+  container.innerHTML = `
+    <h2>🎯 Your Career Recommendation</h2>
+    <h3>${data.career}</h3>
+    <p><strong>Why:</strong> ${data.reason}</p>
+
+    <h4>Skills to Learn:</h4>
+    <ul>
+      ${data.skills_to_learn.map(skill => `<li>${skill}</li>`).join("")}
+    </ul>
+
+    <h4>Next Steps:</h4>
+    <ul>
+      ${data.next_steps.map(step => `<li>${step}</li>`).join("")}
+    </ul>
+  `;
+}
