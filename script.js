@@ -32,14 +32,10 @@ function showLoader() {
 // FETCH QUESTION
 // ==========================
 async function fetchNextQuestion(answer) {
-  if (quizCompleted && answer !== "__FORCE_RESULT__") {
-    console.log("Blocked extra request");
-    return;
-  }
-
+  if (quizCompleted && answer !== "__FORCE_RESULT__") return;
   if (isLoading) return;
-  isLoading = true;
 
+  isLoading = true;
   showLoader();
 
   console.log("STAGE:", answers.length);
@@ -53,18 +49,15 @@ async function fetchNextQuestion(answer) {
       body: JSON.stringify({
         answer: answer,
         stage: answers.length,
-        history: answers.map((ans, i) => ({
-          stage: i,
-          answer: ans
-        })),
-        forceResult: answers.length >= 7 // 🔥 FIX: early result trigger
+        history: answers,
+        forceResult: answers.length >= 7
       })
     });
 
     const text = await response.text();
 
     if (!text) {
-      console.error("Empty response");
+      console.error("Empty response from backend");
       isLoading = false;
       return;
     }
@@ -72,7 +65,7 @@ async function fetchNextQuestion(answer) {
     let data;
     try {
       data = JSON.parse(text);
-    } catch (e) {
+    } catch (err) {
       console.error("Invalid JSON:", text);
       isLoading = false;
       return;
@@ -80,7 +73,7 @@ async function fetchNextQuestion(answer) {
 
     console.log("RAW RESPONSE:", data);
 
-    // 🔥 FIX: handle invalid response
+    // ❌ invalid AI response
     if (!data || !data.type) {
       console.error("Invalid AI response:", data);
       isLoading = false;
@@ -88,7 +81,7 @@ async function fetchNextQuestion(answer) {
     }
 
     // ==========================
-    // RESULT HANDLING
+    // RESULT
     // ==========================
     if (data.type === "result") {
       quizCompleted = true;
@@ -98,12 +91,10 @@ async function fetchNextQuestion(answer) {
     }
 
     // ==========================
-    // QUESTION FLOW
+    // QUESTION
     // ==========================
-    setTimeout(() => {
-      showQuestion(data);
-      isLoading = false;
-    }, 300);
+    showQuestion(data);
+    isLoading = false;
 
   } catch (error) {
     console.error("ERROR:", error);
@@ -118,22 +109,21 @@ async function fetchNextQuestion(answer) {
 function showQuestion(data) {
   const container = document.querySelector(".card");
 
-  let buttons = "";
-
-  if (Array.isArray(data.options)) {
-    data.options.forEach(opt => {
-      buttons += `
-        <button class="option-btn" data-value="${opt}">
-          ${opt}
-        </button><br>
-      `;
-    });
+  if (!Array.isArray(data.options)) {
+    console.error("Options missing:", data);
+    return;
   }
+
+  let buttons = data.options.map(opt => `
+    <button class="option-btn" data-value="${opt}">
+      ${opt}
+    </button>
+  `).join("");
 
   container.innerHTML = `
     <h2>🚀 AI Career Advisor</h2>
     <p>${data.question || "Loading..."}</p>
-    ${buttons}
+    <div class="options">${buttons}</div>
   `;
 
   document.querySelectorAll(".option-btn").forEach(btn => {
@@ -151,7 +141,9 @@ function handleAnswer(option) {
 
   answers.push(option);
 
-  // 🔥 FIX: stop earlier (prevents looping)
+  console.log("ANSWERS:", answers);
+
+  // 🔥 stop at 7 → force result
   if (answers.length >= 7) {
     quizCompleted = true;
     fetchNextQuestion("__FORCE_RESULT__");
