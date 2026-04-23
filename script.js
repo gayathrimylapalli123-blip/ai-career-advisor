@@ -3,7 +3,7 @@
 // ==========================
 let answers = [];
 let isLoading = false;
-let quizCompleted = false; // 🔒 prevents extra calls
+let quizCompleted = false;
 
 // ==========================
 // START APP
@@ -12,7 +12,7 @@ function startApp() {
   answers = [];
   isLoading = false;
   quizCompleted = false;
-  fetchNextQuestion(null);
+  fetchNextQuestion("start");
 }
 
 // ==========================
@@ -32,7 +32,6 @@ function showLoader() {
 // FETCH QUESTION
 // ==========================
 async function fetchNextQuestion(answer) {
-  // 🚨 STOP if already completed
   if (quizCompleted && answer !== "__FORCE_RESULT__") {
     console.log("Blocked extra request");
     return;
@@ -52,25 +51,55 @@ async function fetchNextQuestion(answer) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-  answer: answer,
-  stage: answers.length,
-  history: answers.map((ans, i) => ({
-    stage: i,
-    answer: ans
-  })),
-  forceResult: answers.length === 10
-})
-
+        answer: answer,
+        stage: answers.length,
+        history: answers.map((ans, i) => ({
+          stage: i,
+          answer: ans
+        })),
+        forceResult: answers.length >= 7 // 🔥 FIX: early result trigger
+      })
     });
 
-    const data = await response.json();
-    if (data.type === "result") {
-  showResult(data);
-  return;
-}
+    const text = await response.text();
+
+    if (!text) {
+      console.error("Empty response");
+      isLoading = false;
+      return;
+    }
+
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      console.error("Invalid JSON:", text);
+      isLoading = false;
+      return;
+    }
 
     console.log("RAW RESPONSE:", data);
 
+    // 🔥 FIX: handle invalid response
+    if (!data || !data.type) {
+      console.error("Invalid AI response:", data);
+      isLoading = false;
+      return;
+    }
+
+    // ==========================
+    // RESULT HANDLING
+    // ==========================
+    if (data.type === "result") {
+      quizCompleted = true;
+      showResult(data);
+      isLoading = false;
+      return;
+    }
+
+    // ==========================
+    // QUESTION FLOW
+    // ==========================
     setTimeout(() => {
       showQuestion(data);
       isLoading = false;
@@ -84,43 +113,11 @@ async function fetchNextQuestion(answer) {
 }
 
 // ==========================
-// SHOW QUESTION / RESULT
+// SHOW QUESTION
 // ==========================
 function showQuestion(data) {
   const container = document.querySelector(".card");
 
-  // ==========================
-  // RESULT SCREEN
-  // ==========================
-  if (data.type === "result") {
-    quizCompleted = true; // 🔒 LOCK SYSTEM
-
-    let html = `<h2>🎯 Career Recommendation</h2>`;
-    html += `<p>${data.message || "No result available"}</p>`;
-
-    if (Array.isArray(data.resources)) {
-      html += `<h3>📚 Resources</h3>`;
-      data.resources.forEach(r => {
-        html += `
-          <div>
-            <strong>${r.title}</strong><br>
-            <small>${r.platform}</small><br>
-            <a href="${r.link}" target="_blank">Open</a>
-          </div><br>
-        `;
-      });
-    }
-
-    html += `<button id="restartBtn">Restart</button>`;
-    container.innerHTML = html;
-
-    document.getElementById("restartBtn").addEventListener("click", startApp);
-    return;
-  }
-
-  // ==========================
-  // QUESTION SCREEN
-  // ==========================
   let buttons = "";
 
   if (Array.isArray(data.options)) {
@@ -139,7 +136,6 @@ function showQuestion(data) {
     ${buttons}
   `;
 
-  // ✅ SAFE EVENT LISTENERS
   document.querySelectorAll(".option-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       handleAnswer(btn.dataset.value);
@@ -153,16 +149,10 @@ function showQuestion(data) {
 function handleAnswer(option) {
   if (isLoading || quizCompleted) return;
 
-  // 🚨 HARD STOP
-  if (answers.length >= 10) {
-    console.log("STOP: Max reached");
-    return;
-  }
-
   answers.push(option);
 
-  // ✅ EXACTLY 10 → GET RESULT
-  if (answers.length === 10) {
+  // 🔥 FIX: stop earlier (prevents looping)
+  if (answers.length >= 7) {
     quizCompleted = true;
     fetchNextQuestion("__FORCE_RESULT__");
     return;
@@ -172,25 +162,31 @@ function handleAnswer(option) {
 }
 
 // ==========================
-// INIT
+// SHOW RESULT
 // ==========================
-startApp();
 function showResult(data) {
   const container = document.querySelector(".card");
 
   container.innerHTML = `
     <h2>🎯 Your Career Recommendation</h2>
-    <h3>${data.career}</h3>
-    <p><strong>Why:</strong> ${data.reason}</p>
+    <h3>${data.career || "No career found"}</h3>
+    <p><strong>Why:</strong> ${data.reason || "No explanation available"}</p>
 
     <h4>Skills to Learn:</h4>
     <ul>
-      ${data.skills_to_learn.map(skill => `<li>${skill}</li>`).join("")}
+      ${(data.skills_to_learn || []).map(skill => `<li>${skill}</li>`).join("")}
     </ul>
 
     <h4>Next Steps:</h4>
     <ul>
-      ${data.next_steps.map(step => `<li>${step}</li>`).join("")}
+      ${(data.next_steps || []).map(step => `<li>${step}</li>`).join("")}
     </ul>
+
+    <button onclick="startApp()">Restart</button>
   `;
 }
+
+// ==========================
+// INIT
+// ==========================
+startApp();
