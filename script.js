@@ -49,8 +49,11 @@ async function fetchNextQuestion(answer) {
       body: JSON.stringify({
         answer: answer,
         stage: answers.length,
-        history: answers,
-        forceResult: answers.length >= 7
+        history: answers.map((ans, i) => ({
+          stage: i,
+          answer: ans
+        })),
+        forceResult: answers.length >= 6
       })
     });
 
@@ -63,17 +66,26 @@ async function fetchNextQuestion(answer) {
     }
 
     let data;
+
     try {
       data = JSON.parse(text);
+
+      // 🔥 HANDLE n8n STRING RESPONSE
+      if (data.output) {
+        const raw = data.output[0]?.content?.[0]?.text;
+        if (raw) {
+          data = JSON.parse(raw);
+        }
+      }
+
     } catch (err) {
       console.error("Invalid JSON:", text);
       isLoading = false;
       return;
     }
 
-    console.log("RAW RESPONSE:", data);
+    console.log("PARSED RESPONSE:", data);
 
-    // ❌ invalid AI response
     if (!data || !data.type) {
       console.error("Invalid AI response:", data);
       isLoading = false;
@@ -122,7 +134,7 @@ function showQuestion(data) {
 
   container.innerHTML = `
     <h2>🚀 AI Career Advisor</h2>
-    <p>${data.question || "Loading..."}</p>
+    <p>${data.question}</p>
     <div class="options">${buttons}</div>
   `;
 
@@ -143,8 +155,8 @@ function handleAnswer(option) {
 
   console.log("ANSWERS:", answers);
 
-  // 🔥 stop at 7 → force result
-  if (answers.length >= 7) {
+  // 🔥 STOP AFTER 6 QUESTIONS
+  if (answers.length >= 6) {
     quizCompleted = true;
     fetchNextQuestion("__FORCE_RESULT__");
     return;
@@ -161,8 +173,8 @@ function showResult(data) {
 
   container.innerHTML = `
     <h2>🎯 Your Career Recommendation</h2>
-    <h3>${data.career || "No career found"}</h3>
-    <p><strong>Why:</strong> ${data.reason || "No explanation available"}</p>
+    <h3>${data.career}</h3>
+    <p><strong>Why:</strong> ${data.reason}</p>
 
     <h4>Skills to Learn:</h4>
     <ul>
